@@ -1,0 +1,12 @@
+In Development, in case of ReactJs applications(not Nextjs nor GatsBy nor Live Server) setting the cookie
+via response will not work by default for security 
+Solution: adding proxy: 'http://localhost:5000' in package.json
+
+In case of production, it depends on the deployment provider, we create _redirects file and 
+we add configurations over there.
+
+_redirects (Netlify hosting provider configurations)
+
+/api/* <heroku api link.com>/api/:splat 200
+
+/* /index.html 200
