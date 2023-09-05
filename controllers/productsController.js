@@ -1,5 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const ProductsCollection = require('../models/Product');
+const CustomError = require('../customError');
 
 const getAllProducts = async (req, res) => {
   // we can also get reviews associated with this productId with populate method
@@ -26,9 +27,13 @@ const createProduct = async (req, res) => {
 const deleteSingleProduct = async (req, res) => {
   const productId = req.params.id;
   const product = await ProductsCollection.findOne({ _id: productId }); // we can also get reviews associated with this product with populate method
-  await product.remove(); // we will run pre-remove hook to remove reviews associated with this productId
+  if (!product) {
+    throw new CustomError('no such product found', StatusCodes.BAD_REQUEST);
+  }
+  // await product.remove(); // we will run pre-remove hook to remove reviews associated with this productId
+  await product.deleteOne(); // we will run pre-remove hook to remove reviews associated with this productId
 
-  res.json({ product }).status(StatusCodes.OK);
+  res.json({ msg: 'product deleted' }).status(StatusCodes.OK);
 };
 
 const updateSingleProduct = async (req, res) => {

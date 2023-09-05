@@ -87,17 +87,22 @@ ProductSchema.virtual('allreviews', {
   // match: { rating: 5 }, // filter the population, I only want reviews with rating=5
 });
 
-ProductSchema.pre('remove', async function (next) {
-  console.log('remove hook called...... ');
-  try {
-    const manyReviews = await this.model('Reviews-Collection').deleteMany({
-      product: this._id,
-    });
-    next();
-  } catch (error) {
-    next(error);
+ProductSchema.pre(
+  'deleteOne',
+  { document: true, query: false },
+  async function (next) {
+    try {
+      const manyReviews = await this.model('Reviews-Collection').deleteMany({
+        product: this._id,
+      });
+      next();
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
+// Make sure that you've added everything you want to schema,
+// including hooks, before calling.model()!
 const ProductsCollection = mongoose.model('Products-Collection', ProductSchema);
 module.exports = ProductsCollection;

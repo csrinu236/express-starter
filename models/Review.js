@@ -34,11 +34,57 @@ const ReviewSchema = new mongoose.Schema(
 );
 
 // one user can submit ONLY SINGLE review of a product
+ReviewSchema.index({ user: 1, product: 1 }, { unique: true });
 
 // setting user unique && review unique will not to do the job, I guess you can imagine
 // WE want combined uniqueness or compound indexing
 
-ReviewSchema.index({ user: 1, product: 1 }, { unique: true });
+ReviewSchema.statics.calculateValues = async function (productId) {
+  const result = await this.aggregate([
+    // $<operator>: expression
+    {
+      $match: {
+        // product: this.product, will NOT do the job because this is Class, not an instance
+        product: productId,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        noOfReviews: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+  const numOfReviews = result[0]?.noOfReviews || 0;
+  const averageRating = result[0]?.avgRating.toFixed(1) || 0;
+
+  await this.model('Products-Collection').findOneAndUpdate(
+    { _id: productId },
+    {
+      averageRating,
+      numOfReviews,
+    }
+  );
+};
+
+ReviewSchema.post(
+  'deleteOne',
+  { document: true, query: false },
+  async function (next) {
+    const productId = this.product;
+    await this.constructor.calculateValues(productId);
+  }
+);
+
+ReviewSchema.post(
+  'save',
+  { document: true, query: false },
+  async function (next) {
+    const productId = this.product;
+    await this.constructor.calculateValues(productId);
+  }
+);
 
 const ReviewsCollection = mongoose.model('Reviews-Collection', ReviewSchema);
 module.exports = ReviewsCollection;

@@ -46,6 +46,13 @@ const getAllReviews = async (req, res) => {
 // productId(think about amazon website)
 const getSingleProductAllReviews = async (req, res) => {
   const productId = req.params.id;
+  const review = await ReviewsCollection.findOne({ product: productId });
+  if (!review) {
+    throw new CustomError(
+      'no review found with this id',
+      StatusCodes.BAD_REQUEST
+    );
+  }
   const reviews = await ReviewsCollection.find({ product: productId });
   res.json({ reviews }).status(StatusCodes.OK);
 };
@@ -53,7 +60,7 @@ const getSingleProductAllReviews = async (req, res) => {
 // get single review based on review id
 const getSingleReview = async (req, res) => {
   const reviewId = req.params.id;
-  const review = await ReviewsCollection.find({ _id: reviewId });
+  const review = await ReviewsCollection.findOne({ _id: reviewId });
   if (!review) {
     throw new CustomError('no review found', StatusCodes.BAD_REQUEST);
   }
@@ -62,26 +69,26 @@ const getSingleReview = async (req, res) => {
 
 const updateReview = async (req, res) => {
   const reviewId = req.params.id;
-  const review = await ReviewsCollection.find({ _id: reviewId });
+  const review = await ReviewsCollection.findOne({ _id: reviewId });
   if (!review) {
     throw new CustomError('no review found', StatusCodes.BAD_REQUEST);
   }
   checkPermission(review.user, req.user);
   const { rating, title, comment } = req.body;
   review.rating = rating;
-  review.title = title;
-  review.comment = comment;
+  // review.title = title;
+  // review.comment = comment;
 
   // We are going with this instead of findOneAndUpdate() because
   await review.save(); // this will trigger pre save Hook where we can update the avg
   // reviews and no.of reviews of the single product
-  res.status(StatusCodes.OK).json({});
+  res.status(StatusCodes.OK).json({ msg: 'review updated' });
 };
 
 const deleteReview = async (req, res) => {
   const reviewId = req.params.id;
 
-  const review = await ReviewsCollection.find({ _id: reviewId });
+  const review = await ReviewsCollection.findOne({ _id: reviewId });
   if (!review) {
     throw new CustomError('no review found', StatusCodes.BAD_REQUEST);
   }
@@ -89,9 +96,10 @@ const deleteReview = async (req, res) => {
   checkPermission(review.user, req.user);
 
   // We are going with this instead of findOneAndDelete() because
-  await review.remove(); // this will trigger pre delete Hook where we can update the avg
+  // await review.remove(); // this will trigger pre delete Hook where we can update the avg
+  await review.deleteOne(); // this will trigger pre delete Hook where we can update the avg
   // reviews and no.of reviews of the single product
-  res.status(StatusCodes.OK).json({});
+  res.status(StatusCodes.OK).json({ review });
 };
 
 module.exports = {
