@@ -3,28 +3,32 @@ const CustomError = require('../customError');
 const { verifyToken } = require('../utils');
 
 const authorizeUser = (req, res, next) => {
-  // console.log(req.signedCookies);
+  console.log('singed', req.signedCookies);
+  console.log('un singed', req.cookies);
   const { token } = req.signedCookies;
   if (!token) {
     throw new CustomError('Please login', StatusCodes.UNAUTHORIZED);
   }
   try {
     const isTokenValid = verifyToken({ token });
-    const { role, userId, name } = isTokenValid;
+    const { role, userId, name, deviceId } = isTokenValid;
+    const { deviceid } = req.headers;
+    console.log({
+      deviceid,
+      deviceId,
+    });
+    if (deviceid && deviceId !== deviceid) {
+      res.cookie('token', 'logout', {
+        expires: new Date(new Date().getTime()),
+      });
+      throw new Error('You are doing some jugaad...');
+    }
     // role === 'admin' check is done in authorizeAdmin middleware
-    // so that this middleware can be used for single user specific routes
-    // if (role !== 'admin') {
-    //   throw new CustomError(
-    //     'Only admins can access this route',
-    //     StatusCodes.UNAUTHORIZED
-    //   );
-    // }
-    // passing data to next middleware from decrypting token for example to get data associated with Id
-    req.user = { role, userId, name };
+    req.user = { role, userId, name, deviceId };
     next();
   } catch (error) {
     throw new CustomError(
-      'You are not authorized to access this route',
+      error || 'You are not authorized to access this route',
       StatusCodes.UNAUTHORIZED
     );
   }

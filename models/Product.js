@@ -66,7 +66,7 @@ const ProductSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  // { timestamps: true } //adds created at flags on the flys
+  // { timestamps: true } //adds created at updated at flags on the flys
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } } // configuring this model to accpet vritual
 );
 

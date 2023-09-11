@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const isEmail = require('validator/lib/isEmail');
 const bcrypt = require('bcrypt');
+const { boolean } = require('webidl-conversions');
 
 const UserSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Please provide name'],
     maxlength: 50,
-    minlength: 3,
+    minlength: 2,
   },
   email: {
     type: String,
@@ -36,11 +37,14 @@ const UserSchema = new Schema({
     },
     default: 'user',
   },
+  deviceIds: {
+    type: [String],
+  },
 });
 
 // pre save hook
 UserSchema.pre('save', async function () {
-  console.log(this.modifiedPaths());
+  // console.log(this.modifiedPaths());
   // console.log(this.isModified('password'));
   if (!this.isModified('password')) return;
   const salt = await bcrypt.genSalt(10);
