@@ -33,7 +33,6 @@ const getAllReviews = async (req, res) => {
   const reviews = await ReviewsCollection.find({})
     .populate({
       path: 'product',
-      select: 'name',
     })
     .populate({
       path: 'user',
