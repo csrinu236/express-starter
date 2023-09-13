@@ -101,6 +101,14 @@ ProductSchema.pre(
     }
   }
 );
+// ToDo: for checking whether this hook is getting called on updating products collection via review collection
+ProductSchema.post(
+  'findOneAndUpdate',
+  { document: true, query: false },
+  async function (next) {
+    console.log('Product Schema Post Save Hook Called=====================>');
+  }
+);
 
 // Make sure that you've added everything you want to schema,
 // including hooks, before calling.model()!
