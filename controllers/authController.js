@@ -28,11 +28,26 @@ const login = async (req, res) => {
     );
   }
 
-  const { token, jwtPayload } = createJwtToken({ user });
-  attachCookieToResponse({ token, res });
+  // // creating the session
+  // app.use(
+  //   session({
+  //     name: 'user_sid',
+  //     secret: 'secret',
+  //     resave: false,
+  //     saveUninitialized: true,
+  //     cookie: {
+  //       maxAge: 1000 * 60,
+  //       httpOnly: true,
+  //     },
+  //   })
+  // );
+
+  req.session.user = user; // entire session object is destroyed after maxAge is expired
+
+  // const { token, jwtPayload } = createJwtToken({ user });
+  // attachCookieToResponse({ token, res });
   res.status(StatusCodes.OK).json({
     message: 'successfully logged in',
-    user: jwtPayload,
   });
 };
 
@@ -48,12 +63,11 @@ const register = async (req, res) => {
   const user = await User.create({ ...req.body, role }); // this one goes to pre save hook
 
   // creating JWT Token, we do this in login route as well.
-  const { token, jwtPayload } = createJwtToken({ user });
-  attachCookieToResponse({ token, res });
+  // const { token, jwtPayload } = createJwtToken({ user });
+  // attachCookieToResponse({ token, res });
 
   res.status(StatusCodes.CREATED).json({
     msg: 'user registered',
-    user: jwtPayload,
   });
 };
 

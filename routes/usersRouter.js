@@ -9,6 +9,7 @@ const {
 const {
   authorizeUser,
   authorizeAdmin,
+  sessionChecker,
 } = require('../middlewares/authMiddleware');
 
 // only admins have this previlige to see all users
@@ -20,7 +21,7 @@ usersRouter.get(
 );
 
 // for home page population without even quuerrying data base, req.user has enough data to populate the home page when users reload the homepage
-usersRouter.get('/showMe', authorizeUser, showCurrentUser);
+usersRouter.get('/showMe', sessionChecker, showCurrentUser);
 
 usersRouter.patch('/updateUser', authorizeUser, updateUser);
 usersRouter.patch('/updateUserPassword', authorizeUser, updateUserPassword);

@@ -5,6 +5,9 @@ const app = express();
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const session = require('express-session');
+
+console.log('APP_JS Parsing....');
 
 // const bodyParser = require('body-parser');
 // app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,7 +15,29 @@ app.use(express.json()); // middleware for handling json body, express have thei
 app.use(morgan('dev')); // for debuging each and every route only in development mode
 // app.use(cookieParser());
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
+
+// With this middleware, req.session object is created, and when expired, session object dies
+// so when user is logged in successfully, {user_sid: session} are stored as key value
+// pairs in server memory and user_sid(key value) is sent as cookie.
+app.use(
+  '/',
+  session({
+    name: 'user_sid',
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 5,
+      httpOnly: true,
+    },
+  })
+);
 
 // routers
 const { appRouter } = require('./routes/authRouter');
@@ -25,8 +50,6 @@ const { productsRouter } = require('./routes/productsRouter');
 const { reviewsRouter } = require('./routes/reviewsRouter');
 
 app.get('/cookie-check', (req, res) => {
-  console.log(req.cookies);
-  console.log(req.signedCookies);
   throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
 });
 

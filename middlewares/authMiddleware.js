@@ -30,6 +30,20 @@ const authorizeUser = (req, res, next) => {
   }
 };
 
+const sessionChecker = async (req, res, next) => {
+  // it will check session
+  console.log('req.session.user====>', req.session?.user);
+  console.log('req.signedCookies====>', req.signedCookies);
+  if (!req.session.user || !req.signedCookies.user_sid) {
+    res.clearCookie('user_sid');
+    throw new CustomError(
+      'You are not authorized to access this route',
+      StatusCodes.UNAUTHORIZED
+    );
+  }
+  next();
+};
+
 const authorizeAdmin = (...roles) => {
   return (req, res, next) => {
     const { role, userId, name } = req.user;
@@ -40,4 +54,4 @@ const authorizeAdmin = (...roles) => {
   };
 };
 
-module.exports = { authorizeUser, authorizeAdmin };
+module.exports = { authorizeUser, authorizeAdmin, sessionChecker };
