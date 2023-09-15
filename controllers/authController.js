@@ -73,9 +73,10 @@ const register = async (req, res) => {
 
 const logout = async (req, res) => {
   // we have to remove token by setting it negative expiry time
-  res.cookie('token', 'logout', {
-    expires: new Date(new Date().getTime()),
-  });
+  req.session.destroy();
+  // res.cookie('token', 'logout', {
+  //   expires: new Date(new Date().getTime()),
+  // });
   res.json({ message: 'logout route' });
 };
 

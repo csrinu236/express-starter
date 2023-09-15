@@ -13,8 +13,8 @@ console.log('APP_JS Parsing....');
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // middleware for handling json body, express have their own body parser.
 app.use(morgan('dev')); // for debuging each and every route only in development mode
-// app.use(cookieParser());
-app.use(cookieParser(process.env.JWT_SECRET_KEY));
+// app.use(cookieParser()); //cookieParser is not required for session based authentication
+// app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
     origin: 'http://localhost:3000',
