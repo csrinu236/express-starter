@@ -14,7 +14,7 @@ console.log('APP_JS Parsing....');
 app.use(express.json()); // middleware for handling json body, express have their own body parser.
 app.use(morgan('dev')); // for debuging each and every route only in development mode
 // app.use(cookieParser()); //cookieParser is not required for session based authentication
-// app.use(cookieParser(process.env.JWT_SECRET_KEY));
+app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
     origin: 'http://localhost:3000',
@@ -22,16 +22,19 @@ app.use(
   })
 );
 
-// With this middleware, req.session object is created, and when expired, session object dies
-// so when user is logged in successfully, {user_sid: session} are stored as key value
+// With this middleware, req.session object is created, and when expired, session ka nested objects die
+// so when user is logged in successfully, {user_sid: session.user} are stored as key value
 // pairs in server memory and user_sid(key value) is sent as cookie.
+
+// For accessing authorized routes,
 app.use(
   '/',
   session({
     name: 'user_sid',
     secret: 'secret',
+    // genid: () => 'asdf1234',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 5,
       httpOnly: true,

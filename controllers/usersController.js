@@ -65,7 +65,7 @@ const updateUser = async (req, res) => {
 // };
 
 const showCurrentUser = async (req, res) => {
-  const user = req.user;
+  const user = req.session.user;
   res.json({ user }).status(StatusCodes.OK);
 };
 

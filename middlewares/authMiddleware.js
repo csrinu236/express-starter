@@ -32,12 +32,11 @@ const authorizeUser = (req, res, next) => {
 
 const sessionChecker = async (req, res, next) => {
   // it will check session
-  console.log('req.session.user====>', req.session?.user);
-  // console.log('req.signedCookies====>', req.signedCookies);
-  console.log('req.cookies====>', req.cookies);
+  console.log('req.signedCookies====>', req.signedCookies);
+  // console.log('req.cookies====>', req.cookies);
   console.log('req.session====>', req.session);
   if (!req.session.user) {
-    // res.clearCookie('user_sid');
+    res.clearCookie('user_sid');
     throw new CustomError(
       'You are not authorized to access this route',
       StatusCodes.UNAUTHORIZED
