@@ -1,23 +1,23 @@
-require('express-async-errors');
-const express = require('express');
-const connectDB = require('./db/connect');
+require("express-async-errors");
+const express = require("express");
+const connectDB = require("./db/connect");
 const app = express();
-const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const session = require('express-session');
+const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const session = require("express-session");
 
-console.log('APP_JS Parsing....');
+console.log("APP_JS Parsing....");
 
 // const bodyParser = require('body-parser');
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // middleware for handling json body, express have their own body parser.
-app.use(morgan('dev')); // for debuging each and every route only in development mode
+app.use(morgan("dev")); // for debuging each and every route only in development mode
 // app.use(cookieParser()); //cookieParser is not required for session based authentication
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
@@ -27,11 +27,12 @@ app.use(
 // pairs in server memory and user_sid(key value) is sent as cookie.
 
 // For accessing authorized routes,
+// This session middleware checks for the cookie tampering/editing for every route, if cookie is edited, it will throw error
 app.use(
-  '/',
+  "/",
   session({
-    name: 'user_sid',
-    secret: 'secret',
+    name: "user_sid",
+    secret: "secret",
     // genid: () => 'asdf1234',
     resave: false,
     saveUninitialized: false,
@@ -43,35 +44,35 @@ app.use(
 );
 
 // routers
-const { appRouter } = require('./routes/authRouter');
-const { notFound } = require('./middlewares/notFound');
-const errorHandlerMiddleware = require('./middlewares/allErrorsHandler');
-const CustomError = require('./customError');
-const { usersRouter } = require('./routes/usersRouter');
-const { StatusCodes } = require('http-status-codes');
-const { productsRouter } = require('./routes/productsRouter');
-const { reviewsRouter } = require('./routes/reviewsRouter');
+const { appRouter } = require("./routes/authRouter");
+const { notFound } = require("./middlewares/notFound");
+const errorHandlerMiddleware = require("./middlewares/allErrorsHandler");
+const CustomError = require("./customError");
+const { usersRouter } = require("./routes/usersRouter");
+const { StatusCodes } = require("http-status-codes");
+const { productsRouter } = require("./routes/productsRouter");
+const { reviewsRouter } = require("./routes/reviewsRouter");
 
-app.get('/cookie-check', (req, res) => {
-  throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
+app.get("/cookie-check", (req, res) => {
+  throw new CustomError("Checking Custom Error", StatusCodes.BAD_REQUEST);
 });
 
 // routes
-app.use('/api/v1/auth', appRouter);
-app.use('/api/v1/users', usersRouter);
-app.use('/api/v1/products', productsRouter);
-app.use('/api/v1/reviews', reviewsRouter);
+app.use("/api/v1/auth", appRouter);
+app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/products", productsRouter);
+app.use("/api/v1/reviews", reviewsRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
 
 const start = async () => {
   try {
-    const URI = 'mongodb://localhost:27017/e-commerce';
+    const URI = "mongodb://localhost:27017/e-commerce";
     await connectDB(URI);
     // await connectDB(process.env.MONGODB_URI);
     app.listen(5000, () => {
-      console.log('APIs are running on port 5000');
+      console.log("APIs are running on port 5000");
     });
   } catch (error) {}
 };
