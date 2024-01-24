@@ -33,6 +33,7 @@ const { StatusCodes } = require('http-status-codes');
 const { productsRouter } = require('./routes/productsRouter');
 const { reviewsRouter } = require('./routes/reviewsRouter');
 const { imageRouter } = require('./routes/imageRouter');
+const { blastDBRouter } = require('./routes/blastDBRouter');
 
 app.get('/cookie-check', (req, res) => {
   console.log(req.cookies);
@@ -46,15 +47,16 @@ app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/products', productsRouter);
 app.use('/api/v1/reviews', reviewsRouter);
 app.use('/api/v1/images', imageRouter);
+app.use('/api/v1/blast-db', blastDBRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
 
 const start = async () => {
   try {
-    const URI = 'mongodb://localhost:27017/e-commerce';
-    await connectDB(URI);
-    // await connectDB(process.env.MONGODB_URI);
+    // const URI = 'mongodb://localhost:27017/e-commerce';
+    // await connectDB(URI);
+    await connectDB(process.env.MONGODB_URI);
     app.listen(5000, () => {
       console.log('APIs are running on port 5000');
     });

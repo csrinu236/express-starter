@@ -65,6 +65,13 @@ const logout = async (req, res) => {
   res.json({ message: 'logout route' });
 };
 
+const blastDB = async (req, res) => {
+  res.status(StatusCodes.CREATED).json({
+    msg: 'user registered',
+    user: jwtPayload,
+  });
+};
+
 module.exports = {
   login,
   logout,
