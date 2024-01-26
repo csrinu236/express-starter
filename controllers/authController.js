@@ -33,8 +33,10 @@ const login = async (req, res) => {
   //   })
   // );
 
-  // req.session.mallesh = user; // entire session object is destroyed after maxAge is expired
-  req.session.isAuth = true;
+  // Here is where cookie will be created with key(user_sid) and sent to client and req.session.<value>
+  // is stored in server memory as value to the key.
+  req.session.user = user; // entire session object is destroyed after maxAge is expired
+  // req.session.isAuth = true;
 
   // const { token, jwtPayload } = createJwtToken({ user });
   // attachCookieToResponse({ token, res });
