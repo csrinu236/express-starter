@@ -38,6 +38,11 @@ const login = async (req, res) => {
   req.session.user = user; // entire session object is destroyed after maxAge is expired
   // req.session.isAuth = true;
 
+  // We should not rely on in-memory session-storage because, it there are
+  // multiple express servers running behing a load balancer, there is no guarantee
+  // that the server has the session-stored. So, we should use a global db to store like
+  // Reddis-Cache or MongoDb or any other db.
+
   // const { token, jwtPayload } = createJwtToken({ user });
   // attachCookieToResponse({ token, res });
   res.status(StatusCodes.OK).json({
@@ -68,6 +73,8 @@ const register = async (req, res) => {
 const logout = async (req, res) => {
   // we have to remove token by setting it negative expiry time
   req.session.destroy();
+  //clear cookie
+  res.clearCookie("user_sid");
   // res.cookie('token', 'logout', {
   //   expires: new Date(new Date().getTime()),
   // });
