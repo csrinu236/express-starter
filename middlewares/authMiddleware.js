@@ -1,12 +1,12 @@
-const { StatusCodes } = require('http-status-codes');
-const CustomError = require('../customError');
-const { verifyToken } = require('../utils');
+const { StatusCodes } = require("http-status-codes");
+const CustomError = require("../customError");
+const { verifyToken } = require("../utils");
 
 const authorizeUser = (req, res, next) => {
   // console.log(req.signedCookies);
   const { token } = req.signedCookies;
   if (!token) {
-    throw new CustomError('Please login', StatusCodes.UNAUTHORIZED);
+    throw new CustomError("Please login", StatusCodes.UNAUTHORIZED);
   }
   try {
     const isTokenValid = verifyToken({ token });
@@ -23,24 +23,18 @@ const authorizeUser = (req, res, next) => {
     req.user = { role, userId, name };
     next();
   } catch (error) {
-    throw new CustomError(
-      'You are not authorized to access this route',
-      StatusCodes.UNAUTHORIZED
-    );
+    throw new CustomError("You are not authorized to access this route", StatusCodes.UNAUTHORIZED);
   }
 };
 
 const sessionChecker = async (req, res, next) => {
   // it will check session
-  console.log('req.signedCookies====>', req.signedCookies);
+  console.log("req.signedCookies====>", req.signedCookies);
   // console.log('req.cookies====>', req.cookies);
-  console.log('req.session====>', req.session);
+  console.log("req.session====>", req.session);
   if (!req.session.user) {
-    res.clearCookie('user_sid');
-    throw new CustomError(
-      'You are not authorized to access this route',
-      StatusCodes.UNAUTHORIZED
-    );
+    res.clearCookie("user_sid");
+    throw new CustomError("You are not authorized to access this route", StatusCodes.UNAUTHORIZED);
   }
   next();
 };
@@ -49,7 +43,7 @@ const authorizeAdmin = (...roles) => {
   return (req, res, next) => {
     const { role, userId, name } = req.user;
     if (!roles.includes(role)) {
-      throw new CustomError('Only admins', StatusCodes.FORBIDDEN);
+      throw new CustomError("Only admins", StatusCodes.FORBIDDEN);
     }
     next();
   };

@@ -26,19 +26,21 @@ app.use(
 // so when user is logged in successfully, {user_sid: session.user} are stored as key value
 // pairs in server memory and user_sid(key value) is sent as cookie.
 
-// For accessing authorized routes,
+// When user is logged in, req.session object is created and stored in server memory.
 // This session middleware checks for the cookie tampering/editing for every route, if cookie is edited, it will throw error
+// if expiry is over, req.session.<any key> will be erased from session storage.
 app.use(
   "/",
   session({
     name: "user_sid",
     secret: "secret",
     // genid: () => 'asdf1234',
-    resave: false,
-    saveUninitialized: false,
+    resave: false, // modifiy or update session data in session storage only when session is modified not for every request.
+    saveUninitialized: false, // intially don't create any cookies for every request but create cookies only when req.session is modified (i.e., when user is logged in we modify req.session)
     cookie: {
       maxAge: 1000 * 60 * 5,
       httpOnly: true,
+      secure: false, // if true, cookie will be sent only on https
     },
   })
 );

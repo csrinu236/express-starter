@@ -1,30 +1,19 @@
-const CustomError = require('../customError');
-const UsersCollection = require('../models/User');
-const { StatusCodes } = require('http-status-codes');
-const {
-  createJwtToken,
-  attachCookieToResponse,
-  checkPermission,
-} = require('../utils');
+const CustomError = require("../customError");
+const UsersCollection = require("../models/User");
+const { StatusCodes } = require("http-status-codes");
+const { createJwtToken, attachCookieToResponse, checkPermission } = require("../utils");
 
 const getAllUsers = async (req, res) => {
-  const allUsers = await UsersCollection.find({ role: 'user' }).select(
-    '-password'
-  );
+  const allUsers = await UsersCollection.find({ role: "user" }).select("-password");
   res.status(StatusCodes.OK).json(allUsers);
 };
 
 // problem: susan can see peter details if susan has peter id
 // need to add one more check
 const getSingleUser = async (req, res) => {
-  const user = await UsersCollection.findOne({ _id: req.params.id }).select(
-    '-password'
-  );
+  const user = await UsersCollection.findOne({ _id: req.params.id }).select("-password");
   if (!user) {
-    throw new CustomError(
-      `User not found with id: ${req.params.id}`,
-      StatusCodes.NOT_FOUND
-    );
+    throw new CustomError(`User not found with id: ${req.params.id}`, StatusCodes.NOT_FOUND);
   }
   checkPermission(user._id, req.user);
   res.status(StatusCodes.OK).json({ user });
@@ -47,7 +36,7 @@ const updateUser = async (req, res) => {
   // you have to create the cookie again because you have changed the name
   const { token, jwtPayload } = createJwtToken({ user });
   attachCookieToResponse({ token, res });
-  res.status(StatusCodes.OK).json({ msg: 'user updated', user: jwtPayload });
+  res.status(StatusCodes.OK).json({ msg: "user updated", user: jwtPayload });
 };
 
 // const updateUser = async (req, res) => {
@@ -72,16 +61,13 @@ const showCurrentUser = async (req, res) => {
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword, email } = req.body;
   if (!oldPassword || !newPassword) {
-    throw new CustomError('Please enter valid data', StatusCodes.BAD_REQUEST);
+    throw new CustomError("Please enter valid data", StatusCodes.BAD_REQUEST);
   }
   const user = await UsersCollection.findOne({ email });
   //   const user = await UsersCollection.findOne({ _id: req.user.userId }); // this will also work
   const isPwdCorrect = await user.comparePassword(oldPassword);
   if (!isPwdCorrect) {
-    throw new CustomError(
-      'Please enter correct password',
-      StatusCodes.UNAUTHORIZED
-    );
+    throw new CustomError("Please enter correct password", StatusCodes.UNAUTHORIZED);
   }
 
   // we can go with user.save(), control goes through pre save hook so again hash the new password as we wanted
@@ -89,7 +75,7 @@ const updateUserPassword = async (req, res) => {
   // ofcourse we don't want any object to be returned just for changing the password
   user.password = newPassword;
   await user.save();
-  res.status(StatusCodes.OK).json({ msg: 'password updated successfully' });
+  res.status(StatusCodes.OK).json({ msg: "password updated successfully" });
 };
 
 module.exports = {
