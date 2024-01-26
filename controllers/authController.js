@@ -40,7 +40,7 @@ const login = async (req, res) => {
 
   // We should not rely on in-memory session-storage because, it there are
   // multiple express servers running behing a load balancer, there is no guarantee
-  // that the server has the session-stored. So, we should use a global db to store like
+  // that the server has the session-stored. So, we should use a global/centralised db to store like
   // Reddis-Cache or MongoDb or any other db.
 
   // const { token, jwtPayload } = createJwtToken({ user });
