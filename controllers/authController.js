@@ -34,7 +34,7 @@ const login = async (req, res) => {
   // );
 
   // Here is where cookie will be created with key(user_sid) and sent to client and req.session.<value>
-  // is stored in server memory as value to the key.
+  // is stored in server memory(session-storage) as value to the key.
   req.session.user = user; // entire session object is destroyed after maxAge is expired
   // req.session.isAuth = true;
 
@@ -42,6 +42,17 @@ const login = async (req, res) => {
   // multiple express servers running behing a load balancer, there is no guarantee
   // that the server has the session-stored. So, we should use a global/centralised db to store like
   // Reddis-Cache or MongoDb or any other db.
+
+  // That's why we use JWT Token, which is stateless is more famous.
+
+  // <====== Session.save(callback) =====>
+  // Save the session back to the store, replacing the contents on the store with the contents in memory (though a store may do something else--consult the store's documentation for exact behavior).
+  // This method is automatically called at the end of the HTTP response if the session data has been altered (though this behavior can be altered with various options in the middleware constructor). Because of this, typically this method does not need to be called.
+  // There are some cases where it is useful to call this method, for example, redirects, long-lived requests or in WebSockets.
+
+  // req.session.save(function (err) {
+  // session saved
+  // });
 
   // const { token, jwtPayload } = createJwtToken({ user });
   // attachCookieToResponse({ token, res });

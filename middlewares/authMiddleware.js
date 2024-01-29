@@ -32,6 +32,8 @@ const sessionChecker = async (req, res, next) => {
   console.log("req.signedCookies====>", req.signedCookies);
   // console.log('req.cookies====>', req.cookies);
   console.log("req.session====>", req.session);
+  console.log("req.session.cookie.maxAge", req.session.cookie.maxAge); // prints remaining time for expiry
+
   if (!req.session.user) {
     res.clearCookie("user_sid");
     throw new CustomError("You are not authorized to access this route", StatusCodes.UNAUTHORIZED);
