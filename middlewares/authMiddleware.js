@@ -1,32 +1,43 @@
-const { StatusCodes } = require('http-status-codes');
-const CustomError = require('../customError');
-const { verifyToken } = require('../utils');
+const { StatusCodes } = require("http-status-codes");
+const CustomError = require("../customError");
+const { verifyToken, attachCookieToResponse, createJwtToken } = require("../utils");
+const TokensCollection = require("../models/Token");
 
-const authorizeUser = (req, res, next) => {
-  // console.log(req.signedCookies);
-  const { token } = req.signedCookies;
-  if (!token) {
-    throw new CustomError('Please login', StatusCodes.UNAUTHORIZED);
-  }
+const authorizeUser = async (req, res, next) => {
+  console.log(req.signedCookies);
+  let { accessToken, refreshToken } = req.signedCookies;
+
   try {
-    const isTokenValid = verifyToken({ token });
-    const { role, userId, name } = isTokenValid;
-    // role === 'admin' check is done in authorizeAdmin middleware
-    // so that this middleware can be used for single user specific routes
-    // if (role !== 'admin') {
-    //   throw new CustomError(
-    //     'Only admins can access this route',
-    //     StatusCodes.UNAUTHORIZED
-    //   );
-    // }
-    // passing data to next middleware from decrypting token for example to get data associated with Id
+    if (accessToken) {
+      const isAccessTokenValid = verifyToken(accessToken);
+      const { role, userId, name } = isAccessTokenValid;
+      // role === 'admin' check is done in authorizeAdmin middleware
+      req.user = { role, userId, name };
+      return next();
+    }
+    const isRefreshTokenValid = verifyToken(refreshToken);
+    const { role, userId, name, refreshTokenString } = isRefreshTokenValid;
+    const existingRefreshTokenObj = await TokensCollection.findOne({ refreshTokenString, userId });
+    // check for the validity of refreshTokenObj
+    // It is assumed that ip  and userAgent will not change just within 15 minutes.
+    // 1) req.ip !== existingRefreshTokenObj.ip
+    // 2) req.headers['user-agent'] !=== existingRefreshTokenObj.userAgent
+    if (req.ip !== existingRefreshTokenObj.ip || req.headers["user-agent"] !== existingRefreshTokenObj.userAgent) {
+      throw new CustomError("You are not authorized to access this route", StatusCodes.UNAUTHORIZED);
+    }
+    const jwtPayload = {
+      name,
+      userId,
+      role,
+    };
+    accessToken = createJwtToken(jwtPayload);
+    refreshToken = createJwtToken({ ...jwtPayload, refreshTokenString });
+    attachCookieToResponse({ accessToken, refreshToken, res });
     req.user = { role, userId, name };
-    next();
+    return next();
   } catch (error) {
-    throw new CustomError(
-      'You are not authorized to access this route',
-      StatusCodes.UNAUTHORIZED
-    );
+    console.log(error);
+    throw new CustomError("You are not authorized to access this route", StatusCodes.UNAUTHORIZED);
   }
 };
 
@@ -34,7 +45,7 @@ const authorizeAdmin = (...roles) => {
   return (req, res, next) => {
     const { role, userId, name } = req.user;
     if (!roles.includes(role)) {
-      throw new CustomError('Only admins', StatusCodes.FORBIDDEN);
+      throw new CustomError("Only admins", StatusCodes.FORBIDDEN);
     }
     next();
   };
