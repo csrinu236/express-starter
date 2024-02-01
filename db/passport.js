@@ -25,12 +25,26 @@ passport.use(
       //   User.findOrCreate({ googleId: profile.id }, function (err, user) {
       //     return cb(err, user);
       //   });
-      console.log({ params, accessToken, refreshToken });
-      const user = await UsersCollection.findOne({ email: profile.emails[0].value });
-      // request.user = user;
-      const { token } = createJwtToken({ user });
-      // this will send "req.user = token" to callbackURL: "http://localhost:5000/auth/google/callback",
-      return cb(null, token); // will send req.user to ENTRY 4
+      // console.log({ params, profile });
+      try {
+        let user = await UsersCollection.findOne({ email: profile.emails[0].value });
+        // request.user = user;
+        if (!user) {
+          user = {
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            role: "user",
+            isSocialMedia: true,
+          };
+          await UsersCollection.create({ ...user });
+        }
+        const { token } = createJwtToken({ user });
+        // this will send "req.user = token" to callbackURL: "http://localhost:5000/auth/google/callback",
+        return cb(null, token); // will send req.user to ENTRY 4
+      } catch (error) {
+        console.log(error);
+        return cb(error, null);
+      }
     }
   )
 );

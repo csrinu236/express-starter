@@ -107,16 +107,21 @@ app.get(
     session: false,
   }),
   function (req, res) {
-    console.log("req.user", req.user); // token from Entry 3 to attach cookie to response
+    try {
+      console.log("req.user", req.user); // token from Entry 3 to attach cookie to response
 
-    attachCookieToResponse({ token: req.user, res });
-    // how to attch this cookie to response of redirect url ?
-    // res.redirect("http://
-    // res.session = req.user => modifications made to req are not available in the next middleware
-    // basically here we are redirect to clientside url.
-    res.status(200).redirect("http://localhost:5500/protected.html");
-    // res.redirect will not persist the req.user, also we rely on cookie for authentication, so no problem.
-    // cookie verification(verifyToken function) will add req.user to req object.
+      attachCookieToResponse({ token: req.user, res }); //
+      // how to attch this cookie to response of redirect url ?
+      // res.redirect("http://
+      // res.session = req.user => modifications made to req are not available in the next middleware
+      // basically here we are redirect to clientside url.
+      res.status(200).redirect("http://localhost:5500/protected.html");
+      // res.redirect will not persist the req.user, also we rely on cookie for authentication, so no problem.
+      // cookie verification(verifyToken function) will add req.user to req object.
+    } catch (error) {
+      console.log(error);
+      res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    }
   }
 );
 
