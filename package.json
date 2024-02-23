@@ -10,7 +10,7 @@
     "vercel-build": "echo HELLO FROM VERCEL"
   },
   "engines": {
-    "node": "14.x"
+    "node": "20.x"
   },
   "keywords": [],
   "author": "",
