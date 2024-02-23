@@ -7,7 +7,7 @@
       "dest": "/app.js",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       "headers": {
-        "Access-Control-Allow-Origin": "https://checking-cookie.netlify.app",
+        "Access-Control-Allow-Origin": "https://checking-cookie.netlify.app, http://localhost:3000",
         "Access-Control-Allow-Credentials": "true"
       }
     }
