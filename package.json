@@ -8,9 +8,6 @@
     "start": "env-cmd -f ./.env nodemon app.js",
     "vercel-build": "echo HELLO FROM VERCEL"
   },
-  "engines": {
-    "node": "18.x"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
