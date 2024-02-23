@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "env-cmd -f ./.env nodemon index.js",
-    "start": "node index.js",
-    "vercel-build": "echo HELLO FROM VERCEL"
+    "start": "node index.js"
   },
   "engines": {
     "node": "18.x"
