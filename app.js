@@ -45,6 +45,10 @@ const { reviewsRouter } = require("./routes/reviewsRouter");
 const { imageRouter } = require("./routes/imageRouter");
 const { authorizeUser } = require("./middlewares/authMiddleware");
 
+app.get("/", (req, res) => {
+  res.status(StatusCodes.OK).json({ msg: "Health Route working fine" });
+});
+
 app.get("/cookie-check", (req, res) => {
   console.log(req.cookies);
   console.log(req.signedCookies);
