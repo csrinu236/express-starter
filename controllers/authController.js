@@ -11,7 +11,7 @@ const LOGGED_IN_USERS = new Map();
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new CustomError("Please enter valid credentials", StatusCodes.BAD_REQUEST);
+    throw new CustomError("Please enter valid credentials.", StatusCodes.BAD_REQUEST);
   }
   const user = await User.findOne({ email });
   if (!user) {
