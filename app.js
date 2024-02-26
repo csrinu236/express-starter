@@ -16,6 +16,7 @@ app.use(
   cors({
     credentials: true,
     origin: ["https://my-front-end-app.netlify.app", "http://localhost:3000"],
+    allowedHeaders: ["Content-Type", "csrfToken"],
   })
 );
 const bodyParser = require("body-parser");
