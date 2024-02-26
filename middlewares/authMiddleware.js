@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../customError");
 const { verifyToken } = require("../utils");
+const { LOGGED_IN_USERS } = require("../controllers/authController");
 
 const authorizeUser = (req, res, next) => {
   console.log(req.signedCookies);
@@ -10,9 +11,16 @@ const authorizeUser = (req, res, next) => {
   if (!token) {
     throw new CustomError("Please login", StatusCodes.UNAUTHORIZED);
   }
+
   try {
     const isTokenValid = verifyToken({ token });
     const { role, userId, name } = isTokenValid;
+    const storedCsrfToken = LOGGED_IN_USERS.get(userId);
+    const csrfToken = req.headers.csrftoken;
+
+    if (!storedCsrfToken || !csrfToken || storedCsrfToken !== csrfToken) {
+      throw new CustomError("Invalid csrf token", StatusCodes.UNAUTHORIZED);
+    }
     // role === 'admin' check is done in authorizeAdmin middleware
     // so that this middleware can be used for single user specific routes
     // if (role !== 'admin') {
@@ -25,7 +33,7 @@ const authorizeUser = (req, res, next) => {
     req.user = { role, userId, name };
     next();
   } catch (error) {
-    throw new CustomError("You are not authorized to access this route", StatusCodes.UNAUTHORIZED);
+    throw new CustomError(error.message || "You are not authorized to access this route", StatusCodes.UNAUTHORIZED);
   }
 };
 
