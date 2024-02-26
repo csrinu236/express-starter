@@ -4,8 +4,6 @@ const { StatusCodes } = require("http-status-codes");
 const jwt = require("jsonwebtoken");
 const { createJwtToken, attachCookieToResponse } = require("../utils/index.js");
 const crypto = require("crypto");
-
-const LOGGED_IN_USERS = new Map();
 // console.log(crypto.randomBytes(64).toString("hex"));
 
 const login = async (req, res) => {
@@ -25,15 +23,10 @@ const login = async (req, res) => {
 
   const { token, jwtPayload } = createJwtToken({ user });
   attachCookieToResponse({ token, res });
-
-  const csrfToken = crypto.randomUUID();
-  console.log({ jwtPayload });
-  LOGGED_IN_USERS.set(jwtPayload.userId.toString(), csrfToken);
-
   res.status(StatusCodes.OK).json({
     message: "successfully logged in",
     user: jwtPayload,
-    csrfToken,
+    csrfToken: crypto.randomUUID(),
   });
 };
 
@@ -70,5 +63,4 @@ module.exports = {
   login,
   logout,
   register,
-  LOGGED_IN_USERS,
 };
