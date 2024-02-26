@@ -4,6 +4,7 @@ const { verifyToken } = require("../utils");
 
 const authorizeUser = (req, res, next) => {
   console.log(req.signedCookies);
+  const { token } = req.signedCookies;
   // const { token } = req.cookies;
   console.log({ token });
   if (!token) {
