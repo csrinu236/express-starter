@@ -15,7 +15,7 @@ app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
     credentials: true,
-    origin: ["https://checking-cookie.netlify.app", "http://localhost:3000"],
+    origin: ["https://my-front-end-app.netlify.app", "http://localhost:3000"],
   })
 );
 const bodyParser = require("body-parser");
