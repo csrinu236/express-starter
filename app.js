@@ -84,7 +84,7 @@ const start = async () => {
       console.log(`APIs are running on port ${process.env.PORT}`);
     });
   } catch (error) {
-    console.log("SOMEWITH WENT WRONG IN STARTING THE APP");
+    console.log("SOMETHING WENT WRONG IN STARTING THE APP");
   }
 };
 
