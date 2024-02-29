@@ -57,7 +57,7 @@ const { imageRouter } = require("./routes/imageRouter");
 const { authorizeUser } = require("./middlewares/authMiddleware");
 
 app.get("/", (req, res) => {
-  res.status(StatusCodes.OK).json({ msg: "Health Route working fine" });
+  res.status(StatusCodes.OK).json({ msg: "with CSRF Token, Health Route working fine" });
 });
 
 app.get("/cookie-check", (req, res) => {
