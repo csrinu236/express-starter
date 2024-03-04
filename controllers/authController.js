@@ -73,5 +73,5 @@ module.exports = {
   login,
   logout,
   register,
-  LOGGED_IN_USERS,
+  // LOGGED_IN_USERS,
 };
