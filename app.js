@@ -55,6 +55,7 @@ const { productsRouter } = require("./routes/productsRouter");
 const { reviewsRouter } = require("./routes/reviewsRouter");
 const { imageRouter } = require("./routes/imageRouter");
 const { authorizeUser } = require("./middlewares/authMiddleware");
+const REDIS_CLIENT = require("./utils/redis");
 
 app.get("/", (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "with CSRF Token, Health Route working fine" });
@@ -94,6 +95,10 @@ const start = async () => {
     app.listen(process.env.PORT || 5000, () => {
       console.log(`APIs are running on port ${process.env.PORT}`);
     });
+    if (!REDIS_CLIENT.isOpen) {
+      REDIS_CLIENT.connect();
+      console.log("Connected to Redis");
+    }
   } catch (error) {
     console.log("SOMETHING WENT WRONG IN STARTING THE APP");
   }

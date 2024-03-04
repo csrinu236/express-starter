@@ -4,10 +4,11 @@ const { StatusCodes } = require("http-status-codes");
 const jwt = require("jsonwebtoken");
 const { createJwtToken, attachCookieToResponse } = require("../utils/index.js");
 const crypto = require("crypto");
+const REDIS_CLIENT = require("../utils/redis.js");
+const DEFAULT_EXPIRES = 3600;
 
-const LOGGED_IN_USERS = new Map();
+// const LOGGED_IN_USERS = new Map();
 // console.log(crypto.randomBytes(64).toString("hex"));
-
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -28,7 +29,9 @@ const login = async (req, res) => {
 
   const csrfToken = crypto.randomUUID();
   console.log({ jwtPayload });
-  LOGGED_IN_USERS.set(jwtPayload.userId.toString(), csrfToken);
+  // LOGGED_IN_USERS.set(jwtPayload.userId.toString(), csrfToken);
+  const redisObj = { csrfToken, token };
+  REDIS_CLIENT.setEx(jwtPayload.userId.toString(), DEFAULT_EXPIRES, JSON.stringify(redisObj));
 
   res.status(StatusCodes.OK).json({
     message: "successfully logged in",
