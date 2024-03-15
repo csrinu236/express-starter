@@ -57,9 +57,36 @@ const { imageRouter } = require("./routes/imageRouter");
 const { authorizeUser } = require("./middlewares/authMiddleware");
 const REDIS_CLIENT = require("./utils/redis");
 
-app.get("/", (req, res) => {
-  res.status(StatusCodes.OK).json({ msg: "with CSRF Token, Health Route working fine" });
-});
+// app.get("/", (req, res) => {
+//   res.status(StatusCodes.OK).json({ msg: "with CSRF Token, Health Route working fine" });
+// });
+
+const crypto = require("crypto");
+app.use((req, res, next) => {
+  // Define Content Security Policy rules
+  // https://www.youtube.com/watch?v=ryYVW3-kGE0
+  // https://www.youtube.com/watch?v=OQ3uQqVCD-s
+  // In this video protected resource means index.html page
+  // index.html page should not execute hacker written comments in <script></script>
+  let CSP_Rules = "default-src 'self' ;";
+  // instead of setting nonce or sha, we can also add 'unsafe-inline'
+  CSP_Rules += "script-src 'self' 'nonce-hadIUhaudhbhShh' 'sha256-I4pcbOuaPxFwaxfhVjFYNP1QVpPnoXIH4rHZnMVF9ac=' ;";
+  CSP_Rules += "frame-src 'self' https://www.jiotv.com;";
+  CSP_Rules += "frame-ancestors 'self';";
+  CSP_Rules += "report-uri /report/data;";
+
+  res.setHeader("Content-Security-Policy", CSP_Rules);
+
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  // res.setHeader("Content-Security-Policy", "frame-ancestors 'none';"); ==> DENY
+  // res.setHeader("Content-Security-Policy", "frame-ancestors 'self';"); ==> SAMEORIGIN
+  // res.setHeader("Content-Security-Policy", "frame-ancestors 'self' 'my-another-trusted-domain.com';");
+  // you can also have wildcard * for above
+  // so CSP >>> X-Frame-Options in modern browsers. You should have both because legacy browser support is required
+
+  next();
+}, express.static("uploads"));
 
 app.get("/cookie-check", (req, res) => {
   console.log(req.cookies);
@@ -96,7 +123,7 @@ const start = async () => {
       console.log(`APIs are running on port ${process.env.PORT}`);
     });
     if (!REDIS_CLIENT.isOpen) {
-      REDIS_CLIENT.connect();
+      // REDIS_CLIENT.connect();
       console.log("Connected to Redis");
     }
   } catch (error) {
