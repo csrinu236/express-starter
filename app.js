@@ -69,11 +69,18 @@ app.use((req, res, next) => {
   // In this video protected resource means index.html page
   // index.html page should not execute hacker written comments in <script></script>
   let CSP_Rules = "default-src 'self' ;";
-  // instead of setting nonce or sha, we can also add 'unsafe-inline'
+  // instead of setting nonce or sha hashes, we can also add 'unsafe-inline', but this is very unsecure
   CSP_Rules += "script-src 'self' 'nonce-hadIUhaudhbhShh' 'sha256-I4pcbOuaPxFwaxfhVjFYNP1QVpPnoXIH4rHZnMVF9ac=' ;";
   CSP_Rules += "frame-src 'self' https://www.jiotv.com;";
   CSP_Rules += "frame-ancestors 'self';";
+
+  // here CSP errors will be reported to /report/data api, this is useful
   CSP_Rules += "report-uri /report/data;";
+  // The HTTP Content-Security-Policy-Report-Only response header
+  // allows web developers to experiment with policies by monitoring
+  // (but not enforcing) their effects. These violation reports consist
+  // of JSON documents sent via an HTTP POST request to the specified URI
+  // defined in a Reporting-Endpoints HTTP response header.
 
   res.setHeader("Content-Security-Policy", CSP_Rules);
 
