@@ -75,6 +75,8 @@ app.post("/bank-transfer", authorizeUser, (req, res) => {
 app.get("/bank-transfer", authorizeUser, (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Bank Transfer Get request" });
 });
+
+app.use("/img", express.static("public"));
 // =============== bank amount transfer
 
 // routes
