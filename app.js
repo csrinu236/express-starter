@@ -98,7 +98,7 @@ const start = async () => {
       console.log(`APIs are running on port ${process.env.PORT}`);
     });
     if (!REDIS_CLIENT.isOpen) {
-      REDIS_CLIENT.connect();
+      // REDIS_CLIENT.connect();
       console.log("Connected to Redis");
     }
   } catch (error) {
