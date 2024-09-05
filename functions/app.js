@@ -88,15 +88,15 @@ const start = async () => {
         // const URI = "mongodb://localhost:27017/e-commerce";
         // await connectDB(URI);
         await connectDB(process.env.MONGODB_URI);
-        app.listen(process.env.PORT || 5000, () => {
-            console.log(`APIs are running on port ${process.env.PORT}`);
-        });
+        // app.listen(process.env.PORT || 5000, () => {
+        //     console.log(`APIs are running on port ${process.env.PORT}`);
+        // });
     } catch (error) {
         console.log('SOMETHING WENT WRONG IN STARTING THE APP');
     }
 };
 
-// start();
+start();
 
 module.exports.handler = serverless(app);
 
