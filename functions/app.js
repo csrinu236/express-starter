@@ -49,18 +49,18 @@ const { reviewsRouter } = require('../routes/reviewsRouter');
 const { imageRouter } = require('../routes/imageRouter');
 const { authorizeUser } = require('../middlewares/authMiddleware');
 
-app.get('/.netlify/functions/app/apple', (req, res) => {
+app.get('/.netlify/functions/app/health', (req, res) => {
     res.status(StatusCodes.OK).json({ msg: 'Health Route working fine' });
 });
 
-app.get('/cookie-check', (req, res) => {
+app.get('/.netlify/functions/app/cookie-check', (req, res) => {
     console.log(req.cookies);
     console.log(req.signedCookies);
     throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
 });
 
 // ================ bank amount transfer
-app.post('/bank-transfer', authorizeUser, (req, res) => {
+app.post('/.netlify/functions/app/bank-transfer', authorizeUser, (req, res) => {
     const { amount, account } = req.body;
     res.status(StatusCodes.CREATED).json({
         msg: 'Bank Transfer Successfull',
@@ -68,7 +68,7 @@ app.post('/bank-transfer', authorizeUser, (req, res) => {
         account,
     });
 });
-app.get('/bank-transfer', authorizeUser, (req, res) => {
+app.get('/.netlify/functions/app/bank-transfer', authorizeUser, (req, res) => {
     res.status(StatusCodes.OK).json({ msg: 'Bank Transfer Get request' });
 });
 // =============== bank amount transfer
