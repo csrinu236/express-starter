@@ -14,13 +14,10 @@ app.use(morgan('dev')); // for debuging each and every route only in development
 // app.use(cookieParser());
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
-    cors({
-        credentials: true,
-        origin: [
-            'https://my-front-end-app.netlify.app',
-            'http://localhost:3000',
-        ],
-    })
+  cors({
+    credentials: true,
+    origin: ['https://my-front-end-app.netlify.app', 'http://localhost:3000'],
+  })
 );
 const bodyParser = require('body-parser');
 
@@ -32,9 +29,9 @@ app.use(fileUpload());
 // Cloudinary's Node.js SDK wraps Cloudinary's upload API and simplifies the integration.
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_API_KEY,
-    api_secret: process.env.CLOUD_API_SECRET,
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
 });
 
 // routers
@@ -50,26 +47,26 @@ const { imageRouter } = require('../routes/imageRouter');
 const { authorizeUser } = require('../middlewares/authMiddleware');
 
 app.get('/.netlify/functions/app/health', (req, res) => {
-    res.status(StatusCodes.OK).json({ msg: 'Health Route working fine' });
+  res.status(StatusCodes.OK).json({ msg: 'Health Route working fine' });
 });
 
 app.get('/.netlify/functions/app/cookie-check', (req, res) => {
-    console.log(req.cookies);
-    console.log(req.signedCookies);
-    throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
+  console.log(req.cookies);
+  console.log(req.signedCookies);
+  throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
 });
 
 // ================ bank amount transfer
 app.post('/.netlify/functions/app/bank-transfer', authorizeUser, (req, res) => {
-    const { amount, account } = req.body;
-    res.status(StatusCodes.CREATED).json({
-        msg: 'Bank Transfer Successfull',
-        amount,
-        account,
-    });
+  const { amount, account } = req.body;
+  res.status(StatusCodes.CREATED).json({
+    msg: 'Bank Transfer Successfull',
+    amount,
+    account,
+  });
 });
 app.get('/.netlify/functions/app/bank-transfer', authorizeUser, (req, res) => {
-    res.status(StatusCodes.OK).json({ msg: 'Bank Transfer Get request' });
+  res.status(StatusCodes.OK).json({ msg: 'Bank Transfer Get request' });
 });
 // =============== bank amount transfer
 
@@ -84,20 +81,22 @@ app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
 
 const start = async () => {
-    try {
-        // const URI = "mongodb://localhost:27017/e-commerce";
-        // await connectDB(URI);
-        await connectDB(process.env.MONGODB_URI);
-        // app.listen(process.env.PORT || 5000, () => {
-        //     console.log(`APIs are running on port ${process.env.PORT}`);
-        // });
-    } catch (error) {
-        console.log('SOMETHING WENT WRONG IN STARTING THE APP');
-    }
+  try {
+    // const URI = "mongodb://localhost:27017/e-commerce";
+    // await connectDB(URI);
+    await connectDB(process.env.MONGODB_URI);
+    // app.listen(process.env.PORT || 5000, () => {
+    //     console.log(`APIs are running on port ${process.env.PORT}`);
+    // });
+  } catch (error) {
+    console.log('SOMETHING WENT WRONG IN STARTING THE APP');
+  }
 };
 
-start();
-
-module.exports.handler = serverless(app);
+const appStarter = serverless(app);
+module.exports.handler = async (event, context) => {
+  await start();
+  return appStarter(event, context);
+};
 
 // export default app;
