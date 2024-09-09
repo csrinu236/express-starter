@@ -54,7 +54,7 @@ app.get("/cookie-check", (req, res) => {
 //   session({
 //     secret: "my_cookie",
 //     resave: false,
-//     saveUninitialized: true,
+//     saveUninitialized: true, // check express session documentation to check what these vars will do
 //     cookie: { secure: false, maxAge: 600000 },
 //   })
 // );
@@ -97,13 +97,18 @@ app.get("/hello", authorizeUser, (req, res) => {
 // comment "/auth/google/callback" route and check whether this route hit is calling GET "/auth/google/callback" or not
 app.get("/auth/google", passport.authenticate("google", { scope: ["email", "profile", "openid"], accessType: "offline", prompt: "consent" }));
 
+app.get("/auth/failure", (req, res) => {
+  return res.status(200).json({ msg: "something went wrong" });
+});
+
 // Entry 4
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     // successRedirect: "/authenticate",
     // this will redirect to /authenticate route with pesisted req.user where as res.redirect(token based) will not persist req.user
-    failureRedirect: "/logout",
+    failureRedirect: "/auth/failure", // can be redirected to server side, its upto the developer(me);
+    // failureRedirect: "http://localhost:3001/failure", // can be redirected to client side, its upto the developer(me);
     session: false,
   }),
   function (req, res) {
@@ -115,7 +120,7 @@ app.get(
       // res.redirect("http://
       // res.session = req.user => modifications made to req are not available in the next middleware
       // basically here we are redirect to clientside url.
-      res.status(200).redirect("http://localhost:5500/protected.html");
+      res.status(200).redirect("http://localhost:3001/dashboard");
       // res.redirect will not persist the req.user, also we rely on cookie for authentication, so no problem.
       // cookie verification(verifyToken function) will add req.user to req object.
     } catch (error) {

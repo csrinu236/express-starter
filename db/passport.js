@@ -27,6 +27,8 @@ passport.use(
       //   });
       // console.log({ params, profile });
       try {
+        // if you want to utilise other google services like google calender
+        // for example use accessToken, refreshToken.
         let user = await UsersCollection.findOne({ email: profile.emails[0].value });
         // request.user = user;
         if (!user) {
@@ -40,7 +42,9 @@ passport.use(
         }
         const { token } = createJwtToken({ user });
         // this will send "req.user = token" to callbackURL: "http://localhost:5000/auth/google/callback",
+
         return cb(null, token); // will send req.user to ENTRY 4
+        // cb(err, token) => if we connec to database we can forward that mongodb error here cb(err, token)
       } catch (error) {
         console.log(error);
         return cb(error, null);
@@ -49,7 +53,7 @@ passport.use(
   )
 );
 
-// These serializeUser & deserializeUser will run when user loggin is successful
+// These serializeUser & deserializeUser will run when user loggin is successful for session based authentication
 passport.serializeUser((user, cb) => {
   // user from google
   // store user in your desired format(usually only user_id to takeup less session-storage space, instead of storing bulky user object) in session storage (thus generate cookie as key).
