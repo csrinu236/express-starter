@@ -4,6 +4,48 @@ const { StatusCodes } = require('http-status-codes');
 const jwt = require('jsonwebtoken');
 const { createJwtToken, attachCookieToResponse } = require('../utils/index.js');
 
+// Entry 2
+const generateGoogleAuthLink = async (req, res) => {
+  const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+  const options = {
+    redirect_uri: 'http://localhost:5000/auth/google/callback',
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    access_type: 'offline',
+    response_type: 'code',
+    prompt: 'consent',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email',
+    ].join(' '),
+  };
+
+  const queryParams = new URLSearchParams(options);
+
+  return res.redirect(`${rootUrl}?${queryParams.toString()}`);
+  // will be redirected to
+  // http://localhost:5000/auth/google/callback?code=4%2F0AQlEd8xMAdRKckM4rWUB-cywwazinq77ThSeeFtVKcbpJ3DrACnj78sSBcsfFd-gjDr12w&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=consent
+  // need to extract query param code
+};
+const generateGithubAuthLink = async (req, res) => {
+  const rootUrl = 'https://github.com/login/oauth/authorize';
+
+  const options = {
+    redirect_uri: 'http://localhost:5000/auth/github/callback',
+    client_id: process.env.GITHUB_CLIENT_ID,
+    scope: ['read:user', 'user:email'].join(' '), // Scopes to get user profile and email
+    allow_signup: 'true', // Allows users to sign up if they don't have a GitHub account
+    response_type: 'code',
+  };
+
+  const queryParams = new URLSearchParams(options);
+
+  return res.redirect(`${rootUrl}?${queryParams.toString()}`);
+  // will be redirected to
+  // ttp://localhost:5000/auth/github/callback?code=01b23935b3da29fb9f15
+  // need to extract query param code
+};
+
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -69,4 +111,6 @@ module.exports = {
   login,
   logout,
   register,
+  generateGoogleAuthLink,
+  generateGithubAuthLink,
 };

@@ -33,11 +33,38 @@ const { StatusCodes } = require('http-status-codes');
 const { productsRouter } = require('./routes/productsRouter');
 const { reviewsRouter } = require('./routes/reviewsRouter');
 const { imageRouter } = require('./routes/imageRouter');
+const {
+  getGoogleAuthTokens,
+  attachCookieToResponse,
+  getGitHubAuthTokens,
+} = require('./utils');
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ msg: 'Health Okay' });
+});
 
 app.get('/cookie-check', (req, res) => {
   console.log(req.cookies);
   console.log(req.signedCookies);
   throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
+});
+
+// Entry 3
+app.get('/auth/google/callback', async (req, res) => {
+  // Extract code query param from
+  const code = req.query.code;
+  // Entry 4=> After making token, attack token to cookies
+  // res.redirect will persist the cookie along with response, so cookies will be attached to response
+  const token = await getGoogleAuthTokens({ code });
+  attachCookieToResponse({ token, res });
+  res.redirect('http://localhost:3000/dashboard');
+});
+
+app.get('/auth/github/callback', async (req, res) => {
+  const code = req.query.code;
+  const token = await getGitHubAuthTokens({ code });
+  attachCookieToResponse({ token, res });
+  res.redirect('http://localhost:3000/dashboard');
 });
 
 // routes
