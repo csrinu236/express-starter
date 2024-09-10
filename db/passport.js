@@ -53,6 +53,7 @@ passport.use(
   )
 );
 
+// write the user into the session storage
 // These serializeUser & deserializeUser will run when user loggin is successful for session based authentication
 passport.serializeUser((user, cb) => {
   // user from google
@@ -61,6 +62,7 @@ passport.serializeUser((user, cb) => {
   cb(null, user.displayName); // will be transfered to deserializeUser in userDataFromSessionStorage
 });
 
+// read the user out of the session storage
 passport.deserializeUser((userDataFromSessionStorage, cb) => {
   // This callback retrieves user_id from session storage
   // De-Serialize the whole user by retrieving whole user from DB based on the user_id from userDataFromSessionStorage

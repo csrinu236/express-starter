@@ -60,7 +60,7 @@ app.get("/cookie-check", (req, res) => {
 // );
 
 app.use(passport.initialize());
-// app.use(passport.session());
+// app.use(passport.session()); // to set the token information from passport to our session cookie.
 
 app.get("/protected", authorizeUser, (req, res) => {
   res.status(200).json({ msg: "protected route", name: req.user.name, role: req.user.role });
@@ -116,7 +116,7 @@ app.get(
       console.log("req.user", req.user); // token from Entry 3 to attach cookie to response
 
       attachCookieToResponse({ token: req.user, res }); //
-      // how to attch this cookie to response of redirect url ?
+      // how to attach this cookie to response of redirect url ?
       // res.redirect("http://
       // res.session = req.user => modifications made to req are not available in the next middleware
       // basically here we are redirect to clientside url.
