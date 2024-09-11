@@ -46,18 +46,23 @@ const { reviewsRouter } = require('../routes/reviewsRouter');
 const { imageRouter } = require('../routes/imageRouter');
 const { authorizeUser } = require('../middlewares/authMiddleware');
 
-app.get('/.netlify/functions/app/health', (req, res) => {
+// This also works
+// app.get('/.netlify/functions/app/health', (req, res) => {
+//   res.status(StatusCodes.OK).json({ msg: 'Health Route working fine' });
+// });
+
+app.get('/health', (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'Health Route working fine' });
 });
 
-app.get('/.netlify/functions/app/cookie-check', (req, res) => {
+app.get('/cookie-check', (req, res) => {
   console.log(req.cookies);
   console.log(req.signedCookies);
   throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
 });
 
 // ================ bank amount transfer
-app.post('/.netlify/functions/app/bank-transfer', authorizeUser, (req, res) => {
+app.post('/bank-transfer', authorizeUser, (req, res) => {
   const { amount, account } = req.body;
   res.status(StatusCodes.CREATED).json({
     msg: 'Bank Transfer Successfull',
@@ -65,17 +70,17 @@ app.post('/.netlify/functions/app/bank-transfer', authorizeUser, (req, res) => {
     account,
   });
 });
-app.get('/.netlify/functions/app/bank-transfer', authorizeUser, (req, res) => {
+app.get('/bank-transfer', authorizeUser, (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'Bank Transfer Get request' });
 });
 // =============== bank amount transfer
 
 // routes
-app.use('/.netlify/functions/app/v1/auth', appRouter);
-app.use('/.netlify/functions/app/v1/users', usersRouter);
-app.use('/.netlify/functions/app/v1/products', productsRouter);
-app.use('/.netlify/functions/app/v1/reviews', reviewsRouter);
-app.use('/.netlify/functions/app/v1/images', imageRouter);
+app.use('/v1/auth', appRouter);
+app.use('/v1/users', usersRouter);
+app.use('/v1/products', productsRouter);
+app.use('/v1/reviews', reviewsRouter);
+app.use('/v1/images', imageRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
