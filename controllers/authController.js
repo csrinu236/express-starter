@@ -14,11 +14,18 @@ const generateGoogleAuthLink = async (req, res) => {
     access_type: 'offline',
     response_type: 'code',
     prompt: 'consent',
+
     scope: [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
     ].join(' '),
   };
+  // Scopes are embedded inside access_token => the above access_token can't be used for
+  // other google services because we only mentioned profile and email scope, not spreadsheets, drive.
+  // so this access_token can't be used to access spreadsheets, drive, docs, etc
+  // https://www.googleapis.com/auth/spreadsheets
+  // https://www.googleapis.com/auth/drive.
+  // https://www.googleapis.com/auth/documents
 
   const queryParams = new URLSearchParams(options);
 
