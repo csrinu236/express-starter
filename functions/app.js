@@ -5,7 +5,7 @@ const connectDB = require('../db/connect');
 const app = express();
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
+// const cors = require('cors');
 const fileUpload = require('express-fileupload');
 // const bodyParser = require('body-parser');
 // app.use(bodyParser.urlencoded({ extended: true }));
@@ -13,12 +13,12 @@ app.use(express.json()); // middleware for handling json body, express have thei
 app.use(morgan('dev')); // for debuging each and every route only in development mode
 // app.use(cookieParser());
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
-app.use(
-  cors({
-    credentials: true,
-    origin: ['https://my-front-end-app.netlify.app', 'http://localhost:3000'],
-  })
-);
+// app.use(
+//   cors({
+//     credentials: true,
+//     origin: ['https://my-front-end-app.netlify.app', 'http://localhost:3000'],
+//   })
+// );
 const bodyParser = require('body-parser');
 
 // Parse URL-encoded bodies (as sent by HTML forms)
