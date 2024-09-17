@@ -4,7 +4,8 @@ const { verifyToken } = require('../utils');
 
 const authorizeUser = (req, res, next) => {
   // console.log(req.signedCookies);
-  const { token } = req.signedCookies;
+  // const { token } = req.signedCookies;
+  const { token } = req.cookies;
   if (!token) {
     throw new CustomError('Please login', StatusCodes.UNAUTHORIZED);
   }

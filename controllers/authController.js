@@ -43,6 +43,7 @@ const generateGithubAuthLink = async (req, res) => {
     scope: ['read:user', 'user:email'].join(' '), // Scopes to get user profile and email
     allow_signup: 'true', // Allows users to sign up if they don't have a GitHub account
     response_type: 'code',
+    prompt: 'consent',
   };
 
   const queryParams = new URLSearchParams(options);

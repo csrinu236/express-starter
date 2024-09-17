@@ -11,7 +11,7 @@ const fileUpload = require('express-fileupload');
 app.use(express.json()); // middleware for handling json body, express have their own body parser.
 app.use(morgan('dev')); // for debuging each and every route only in development mode
 // app.use(cookieParser());
-app.use(cookieParser(process.env.JWT_SECRET_KEY));
+// app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(cors());
 app.use(fileUpload());
 // Also read about cloudinary upload widget
@@ -57,14 +57,14 @@ app.get('/auth/google/callback', async (req, res) => {
   // res.redirect will persist the cookie along with response, so cookies will be attached to response
   const token = await getGoogleAuthTokens({ code });
   attachCookieToResponse({ token, res });
-  res.redirect('http://localhost:3000/dashboard');
+  res.redirect('http://localhost:3000/');
 });
 
 app.get('/auth/github/callback', async (req, res) => {
   const code = req.query.code;
   const token = await getGitHubAuthTokens({ code });
   attachCookieToResponse({ token, res });
-  res.redirect('http://localhost:3000/dashboard');
+  res.redirect('http://localhost:3000/');
 });
 
 // routes
