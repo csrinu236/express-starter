@@ -2,6 +2,8 @@
 
 .env
 
+files
+
 tmp
 # Local Netlify folder
 .netlify

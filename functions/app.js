@@ -34,6 +34,58 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  service: 'gmail',
+  port: 587,
+  secure: false, // true for port 465, false for other ports
+  auth: {
+    user: 'csrinu236@gmail.com',
+    pass: 'qforzidveszkjtub',
+  },
+});
+transporter
+  .verify()
+  .then((e) => {
+    console.log({ success: e });
+  })
+  .catch((e) => {
+    console.log({ failed: e });
+  });
+
+app.get('/send-mail', async (req, res) => {
+  console.log('llllllllll==========================');
+
+  let mailOptions = {
+    from: {
+      name: 'Chenna Sreenu',
+      address: 'csrinu236@gmail.com',
+    },
+    to: 'chennashivakumar05@gmail.com',
+    subject: 'Request for Credit Limit Enhacement',
+    html: getHtml(),
+    attachments: [
+      {
+        filename: 'August.pdf',
+        path: process.cwd() + '/files/Aug_signed.pdf',
+      },
+      {
+        filename: 'July.pdf',
+        path: process.cwd() + '/files/July_signed.pdf',
+      },
+      {
+        filename: 'June.pdf',
+        path: process.cwd() + '/files/June_signed.pdf',
+      },
+    ],
+  };
+
+  let result = await transporter.sendMail(mailOptions);
+
+  return res.status(200).send({ result });
+});
+
 // routers
 const { appRouter } = require('../routes/authRouter');
 const { notFound } = require('../middlewares/notFound');
@@ -45,6 +97,7 @@ const { productsRouter } = require('../routes/productsRouter');
 const { reviewsRouter } = require('../routes/reviewsRouter');
 const { imageRouter } = require('../routes/imageRouter');
 const { authorizeUser } = require('../middlewares/authMiddleware');
+const getHtml = require('../utils/getHtml');
 
 // This also works
 // app.get('/.netlify/functions/app/health', (req, res) => {
