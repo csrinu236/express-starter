@@ -49,12 +49,6 @@ module.exports = () => {
         score.
       </p>
       <p style="color: #333; line-height: 1.6; font-size: 16px">
-        Currently, I am earning <b>₹70,000</b> per month and would like to
-        request an increase in my credit limit. Although I am spending
-        responsibly, I find that the current limit is insufficient, especially
-        during sales periods when I frequently face over-limit usage issues.
-      </p>
-      <p style="color: #333; line-height: 1.6; font-size: 16px">
         I am expecting a ₹200,000 increment in my limit, which would bring the
         total limit to ₹263,000.
       </p>
@@ -80,7 +74,7 @@ module.exports = () => {
         limit. If not possible, I will consider closing the card.
       </p>
       <p style="color: #333; line-height: 1.6; font-size: 16px">
-        Attached are my last 3 months' signed PDFs for your reference.
+        Attached are my last 3 months' self attested PDFs for your reference.
       </p>
       <p style="color: #333; line-height: 1.6; font-size: 16px">
         Thank you for your attention to this matter.

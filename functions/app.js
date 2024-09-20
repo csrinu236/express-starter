@@ -41,8 +41,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
-    user: 'csrinu236@gmail.com',
-    pass: 'qforzidveszkjtub',
+    user: process.env.SENDER_EMAIL,
+    pass: process.env.SENDER_PASSWORD,
   },
 });
 transporter
@@ -62,23 +62,9 @@ app.get('/send-mail', async (req, res) => {
       name: 'Chenna Sreenu',
       address: 'csrinu236@gmail.com',
     },
-    to: 'chennashivakumar05@gmail.com',
+    to: 'csrinu303@gmail.com',
     subject: 'Request for Credit Limit Enhacement',
     html: getHtml(),
-    attachments: [
-      {
-        filename: 'August.pdf',
-        path: process.cwd() + '/files/Aug_signed.pdf',
-      },
-      {
-        filename: 'July.pdf',
-        path: process.cwd() + '/files/July_signed.pdf',
-      },
-      {
-        filename: 'June.pdf',
-        path: process.cwd() + '/files/June_signed.pdf',
-      },
-    ],
   };
 
   let result = await transporter.sendMail(mailOptions);
