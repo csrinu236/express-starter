@@ -34,6 +34,7 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
+// Check this video: https://www.youtube.com/watch?v=QDIOBsMBEI0
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -45,6 +46,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SENDER_PASSWORD,
   },
 });
+
 transporter
   .verify()
   .then((e) => {
@@ -55,6 +57,7 @@ transporter
   });
 
 app.get('/send-mail', async (req, res) => {
+  // Check this video: https://www.youtube.com/watch?v=QDIOBsMBEI0
   console.log('llllllllll==========================');
 
   let mailOptions = {
