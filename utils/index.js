@@ -13,7 +13,8 @@ const createJwtToken = ({ user }) => {
   const jwtPayload = {
     name: user.name, // to say Hi username on home page
     userId: user._id, // must needed to access user specific cartItems and Reviews
-    role: user.role, // since we have role based authentications, we need this
+    role: user.role,
+    picture: user?.picture, // since we have role based authentications, we need this
   };
   const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -87,7 +88,7 @@ const getGoogleAuthTokens = async ({ code }) => {
     console.log('google auth data ============>', data);
     // jwt.decode is different from jwt.verifiy which requires secret_key
     // decode will retrieve info embedded in the token that we see on "https://jwt.io"
-    const { email, name, email_verified } = jwt.decode(data?.id_token);
+    const { email, name, email_verified, picture } = jwt.decode(data?.id_token);
     // or we can utilise below one
     const {
       email: email_2,
@@ -100,7 +101,7 @@ const getGoogleAuthTokens = async ({ code }) => {
 
     if (!email_verified) {
       // Primise reject will forward errors out of this getGoogleAuthTokens into next catch block
-      return Promise.reject(new Error('Email not verified'));
+      return Promise.reject(new Error('Email not verified by Google'));
     }
     // upsert => update if found or insert if not found
     let user = await UsersCollection.findOneAndUpdate(
@@ -108,10 +109,11 @@ const getGoogleAuthTokens = async ({ code }) => {
         email: email,
       },
       {
-        name: name + 'hhhh',
+        name: name,
         email: email,
         role: 'user',
         isSocialMedia: true,
+        picture,
       },
       {
         new: true,
@@ -168,8 +170,9 @@ const getGitHubAuthTokens = async ({ code }) => {
         Authorization: `Bearer ${access_token}`,
       },
     });
+    console.log('=================================>', userData);
 
-    let { email, name, id: githubId } = userData;
+    let { email, name, id: githubId, avatar_url } = userData;
 
     // Ensure the user has a public email set in GitHub (GitHub may not return email if not set)
     if (!email) {
@@ -204,6 +207,7 @@ const getGitHubAuthTokens = async ({ code }) => {
         email: email,
         role: 'user',
         isSocialMedia: true,
+        picture: avatar_url,
       },
       {
         new: true,

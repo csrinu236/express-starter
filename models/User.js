@@ -36,6 +36,16 @@ const UserSchema = new Schema({
     },
     default: 'user',
   },
+
+  isSocialMedia: {
+    type: Boolean,
+    default: false,
+  },
+
+  picture: {
+    type: String,
+    default: '',
+  },
 });
 
 // pre save hook
