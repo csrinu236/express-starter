@@ -3,6 +3,7 @@ const User = require('../models/User.js');
 const { StatusCodes } = require('http-status-codes');
 const jwt = require('jsonwebtoken');
 const { createJwtToken, attachCookieToResponse } = require('../utils/index.js');
+const crypto = require('crypto');
 
 // Entry 2
 const generateGoogleAuthLink = async (req, res) => {
@@ -92,18 +93,11 @@ const register = async (req, res) => {
   if (emailAlreadyExists) {
     throw new CustomError('User with this Email already exists', 400);
   }
-
-  const isFirstAccount = (await User.countDocuments({})) === 0;
-  const role = isFirstAccount ? 'admin' : 'user';
-  const user = await User.create({ ...req.body, role }); // this one goes to pre save hook
-
-  // creating JWT Token, we do this in login route as well.
-  const { token, jwtPayload } = createJwtToken({ user });
-  attachCookieToResponse({ token, res });
+  const id = crypto.randomBytes(24).toString('hex');
+  const user = await User.create({ ...req.body, emailVerificationString: id }); // this one goes to pre save hook
 
   res.status(StatusCodes.CREATED).json({
-    msg: 'user registered',
-    user: jwtPayload,
+    msg: 'user registered, please verify your email to continue',
   });
 };
 

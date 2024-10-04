@@ -22,19 +22,17 @@ const UserSchema = new Schema({
       message: (props) => `${props.value} is not a valid email!`,
     },
   },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailVerificationString: {
+    type: String,
+  },
   password: {
     type: String,
     required: [true, 'Please provide password'],
     minlength: 6,
-  },
-
-  role: {
-    type: String,
-    enum: {
-      values: ['admin', 'user', 'superadmin'],
-      message: '${VALUE} is not a valid role',
-    },
-    default: 'user',
   },
 
   isSocialMedia: {

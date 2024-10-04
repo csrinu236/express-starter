@@ -6,13 +6,13 @@ const {
   generateGoogleAuthLink,
   generateGithubAuthLink,
 } = require('../controllers/authController');
-const appRouter = express.Router();
+const authRouter = express.Router();
 
-appRouter.post('/login', login);
+authRouter.post('/login', login);
 // Entry 1
-appRouter.get('/google/login', generateGoogleAuthLink);
-appRouter.get('/github/login', generateGithubAuthLink);
-appRouter.post('/register', register);
-appRouter.get('/logout', logout);
+authRouter.get('/google/login', generateGoogleAuthLink);
+authRouter.get('/github/login', generateGithubAuthLink);
+authRouter.post('/register', register);
+authRouter.get('/logout', logout);
 
-module.exports = { appRouter };
+module.exports = { authRouter };
