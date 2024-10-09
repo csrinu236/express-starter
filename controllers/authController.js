@@ -12,7 +12,7 @@ const generateGoogleAuthLink = async (req, res) => {
   const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
 
   const options = {
-    redirect_uri: 'http://localhost:5000/auth/google/callback',
+    redirect_uri: `${process.env.GOOGLE_REDIRECT_URI}`,
     client_id: process.env.GOOGLE_CLIENT_ID,
     access_type: 'offline',
     response_type: 'code',
@@ -41,7 +41,7 @@ const generateGithubAuthLink = async (req, res) => {
   const rootUrl = 'https://github.com/login/oauth/authorize';
 
   const options = {
-    redirect_uri: 'http://localhost:5000/auth/github/callback',
+    redirect_uri: `${process.env.GITHUB_REDIRECT_URI}`,
     client_id: process.env.GITHUB_CLIENT_ID,
     scope: ['read:user', 'user:email'].join(' '), // Scopes to get user profile and email
     allow_signup: 'true', // Allows users to sign up if they don't have a GitHub account
@@ -111,7 +111,7 @@ const register = async (req, res) => {
   }
   const id = crypto.randomBytes(24).toString('hex');
   const user = await User.create({ ...req.body, emailVerificationString: id }); // this one goes to pre save hook
-  const link = `http://localhost:3000/verify?email_token=${id}&email=${email}`;
+  const link = `${process.env.CLIENT_URL}/verify?email_token=${id}&email=${email}`;
   let mailOptions = {
     from: {
       name: 'No Cost EMI',

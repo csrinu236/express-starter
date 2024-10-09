@@ -75,7 +75,7 @@ const getGoogleAuthTokens = async ({ code }) => {
     code,
     client_id: process.env.GOOGLE_CLIENT_ID,
     client_secret: process.env.GOOGLE_CLIENT_SECRET,
-    redirect_uri: 'http://localhost:5000/auth/google/callback',
+    redirect_uri: `${process.env.GOOGLE_REDIRECT_URI}`,
     grant_type: 'authorization_code',
   };
 
@@ -148,7 +148,7 @@ const getGitHubAuthTokens = async ({ code }) => {
     code,
     client_id: process.env.GITHUB_CLIENT_ID,
     client_secret: process.env.GITHUB_CLIENT_SECRET,
-    redirect_uri: 'http://localhost:5000/auth/github/callback',
+    redirect_uri: `${process.env.GITHUB_REDIRECT_URI}`,
     grant_type: 'authorization_code',
   };
 
