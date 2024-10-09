@@ -14,7 +14,7 @@ app.use(cookieParser());
 // app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: [`${process.env.CLIENT_URL}`, 'http://localhost:3000'],
     credentials: true,
   })
 );
@@ -41,7 +41,7 @@ app.get('/logout', (req, res) => {
   res.cookie('token', null, {
     expires: new Date(new Date().getTime() - 1000),
   });
-  return res.redirect('http://localhost:3000/login');
+  return res.redirect(`${process.env.CLIENT_URL}/login`);
 });
 
 app.get('/cookie-check', (req, res) => {
@@ -58,14 +58,14 @@ app.get('/auth/google/callback', async (req, res) => {
   // res.redirect will persist the cookie along with response, so cookies will be attached to response
   const token = await getGoogleAuthTokens({ code });
   attachCookieToResponse({ token, res });
-  res.redirect('http://localhost:3000/');
+  res.redirect(`${process.env.CLIENT_URL}`);
 });
 
 app.get('/auth/github/callback', async (req, res) => {
   const code = req.query.code;
   const token = await getGitHubAuthTokens({ code });
   attachCookieToResponse({ token, res });
-  res.redirect('http://localhost:3000/');
+  res.redirect(`${process.env.CLIENT_URL}`);
 });
 
 // routes
@@ -77,9 +77,9 @@ app.use(notFound);
 
 const start = async () => {
   try {
-    const URI = 'mongodb://localhost:27017/no-cost-emi';
-    await connectDB(URI);
-    // await connectDB(process.env.MONGODB_URI);
+    // const URI = 'mongodb://localhost:27017/no-cost-emi';
+    // await connectDB(URI);
+    await connectDB(process.env.MONGODB_URI);
     // app.listen(5000, () => {
     //   console.log('APIs are running on port 5000');
     // });
