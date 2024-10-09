@@ -1,6 +1,7 @@
 require('express-async-errors');
 const express = require('express');
 const connectDB = require('./db/connect');
+const cookieParser = require('cookie-parser');
 const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
@@ -8,9 +9,14 @@ const cors = require('cors');
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // middleware for handling json body, express have their own body parser.
 app.use(morgan('dev')); // for debuging each and every route only in development mode
-// app.use(cookieParser());
+app.use(cookieParser());
 // app.use(cookieParser(process.env.JWT_SECRET_KEY));
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  })
+);
 
 // routers
 const { authRouter } = require('./routes/authRouter');
@@ -24,6 +30,7 @@ const {
   attachCookieToResponse,
   getGitHubAuthTokens,
 } = require('./utils');
+const { cardsRouter } = require('./routes/cardsRouter');
 
 app.get('/health', (req, res) => {
   res.status(200).json({ msg: 'Health Okay' });
@@ -62,6 +69,7 @@ app.get('/auth/github/callback', async (req, res) => {
 
 // routes
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/cards', cardsRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);

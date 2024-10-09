@@ -4,6 +4,8 @@ const { StatusCodes } = require('http-status-codes');
 const jwt = require('jsonwebtoken');
 const { createJwtToken, attachCookieToResponse } = require('../utils/index.js');
 const crypto = require('crypto');
+const { transporter } = require('../utils/transporter.js');
+const getHtml = require('../utils/getHtml.js');
 
 // Entry 2
 const generateGoogleAuthLink = async (req, res) => {
@@ -71,6 +73,20 @@ const login = async (req, res) => {
     );
   }
 
+  if (!user?.emailVerified) {
+    throw new CustomError(
+      'Email not verified, please verify your email',
+      StatusCodes.NOT_FOUND
+    );
+  }
+
+  if (user?.SocialMedia) {
+    throw new CustomError(
+      `Login with ${user.SocialMedia}`,
+      StatusCodes.BAD_REQUEST
+    );
+  }
+
   const isPwdCorrect = await user.comparePassword(password);
   if (!isPwdCorrect) {
     throw new CustomError(
@@ -95,9 +111,40 @@ const register = async (req, res) => {
   }
   const id = crypto.randomBytes(24).toString('hex');
   const user = await User.create({ ...req.body, emailVerificationString: id }); // this one goes to pre save hook
+  const link = `http://localhost:3000/verify?email_token=${id}&email=${email}`;
+  let mailOptions = {
+    from: {
+      name: 'No Cost EMI',
+      address: 'csrinu236@gmail.com',
+    },
+    to: email,
+    subject: 'Verify Your Email',
+    html: getHtml({ link }),
+  };
+
+  let result = await transporter.sendMail(mailOptions);
 
   res.status(StatusCodes.CREATED).json({
     msg: 'user registered, please verify your email to continue',
+  });
+};
+
+const verify = async (req, res) => {
+  const { email_token, email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user || user?.emailVerificationString !== email_token) {
+    throw new CustomError('invalid_request', 400);
+  }
+
+  if (user?.emailVerified) {
+    throw new CustomError('already_verified', 400);
+  }
+
+  user.emailVerified = true;
+  await user.save();
+
+  res.status(StatusCodes.CREATED).json({
+    msg: 'email verified please login',
   });
 };
 
@@ -113,6 +160,7 @@ module.exports = {
   login,
   logout,
   register,
+  verify,
   generateGoogleAuthLink,
   generateGithubAuthLink,
 };

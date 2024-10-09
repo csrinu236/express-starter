@@ -6,12 +6,14 @@ const authorizeUser = (req, res, next) => {
   // console.log(req.signedCookies);
   // const { token } = req.signedCookies;
   const { token } = req.cookies;
+  console.log({ token });
   if (!token) {
     throw new CustomError('Please login', StatusCodes.UNAUTHORIZED);
   }
   try {
     const isTokenValid = verifyToken({ token });
-    const { role, userId, name } = isTokenValid;
+    console.log({ isTokenValid });
+    const { userId, name } = isTokenValid;
     // role === 'admin' check is done in authorizeAdmin middleware
     // so that this middleware can be used for single user specific routes
     // if (role !== 'admin') {
@@ -21,7 +23,7 @@ const authorizeUser = (req, res, next) => {
     //   );
     // }
     // passing data to next middleware from decrypting token for example to get data associated with Id
-    req.user = { role, userId, name };
+    req.user = { userId, name };
     next();
   } catch (error) {
     throw new CustomError(

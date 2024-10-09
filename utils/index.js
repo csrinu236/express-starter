@@ -11,10 +11,11 @@ const verifyToken = ({ token }) => {
 const createJwtToken = ({ user }) => {
   // jwtPayload is the only thing we have inorder to access authenticated routes
   const jwtPayload = {
-    name: user.name, // to say Hi username on home page
-    userId: user._id, // must needed to access user specific cartItems and Reviews
-    role: user.role,
-    picture: user?.picture, // since we have role based authentications, we need this
+    name: user?.name, // to say Hi username on home page
+    userId: user?._id, // must needed to access user specific cartItems and Reviews
+    role: user?.role,
+    picture: user?.picture,
+    // since we have role based authentications, we need this
   };
   const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -89,15 +90,16 @@ const getGoogleAuthTokens = async ({ code }) => {
     // jwt.decode is different from jwt.verifiy which requires secret_key
     // decode will retrieve info embedded in the token that we see on "https://jwt.io"
     const { email, name, email_verified, picture } = jwt.decode(data?.id_token);
+    console.log({ email, name, email_verified, picture });
     // or we can utilise below one
-    const {
-      email: email_2,
-      name: name_2,
-      email_verified: email_verified_2,
-    } = await getGoogleUser({
-      access_token: data?.access_token,
-      id_token: data?.id_token,
-    });
+    // const {
+    //   email: email_2,
+    //   name: name_2,
+    //   email_verified: email_verified_2,
+    // } = await getGoogleUser({
+    //   access_token: data?.access_token,
+    //   id_token: data?.id_token,
+    // });
 
     if (!email_verified) {
       // Primise reject will forward errors out of this getGoogleAuthTokens into next catch block
@@ -112,12 +114,13 @@ const getGoogleAuthTokens = async ({ code }) => {
         name: name,
         email: email,
         role: 'user',
-        isSocialMedia: true,
+        SocialMedia: 'Google',
         picture,
+        emailVerified: true,
       },
       {
         new: true,
-        insert: true,
+        upsert: true,
       }
     );
     // if (!user) {
@@ -125,14 +128,15 @@ const getGoogleAuthTokens = async ({ code }) => {
     //     name: name,
     //     email: email,
     //     role: 'user',
-    //     isSocialMedia: true,
+    //     SocialMedia: true,
     //   };
     //   await UsersCollection.create({ ...user });
     // }
-    console.log(user);
+    console.log({ user });
     const { token } = createJwtToken({ user });
     return token;
   } catch (error) {
+    console.log({ error });
     // Primise reject will forward errors out of this getGoogleAuthTokens into next catch block
     return Promise.reject(error);
   }
@@ -206,7 +210,7 @@ const getGitHubAuthTokens = async ({ code }) => {
         name: name,
         email: email,
         role: 'user',
-        isSocialMedia: true,
+        SocialMedia: 'Github',
         picture: avatar_url,
       },
       {

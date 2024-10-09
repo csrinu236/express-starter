@@ -31,13 +31,12 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    required: [true, 'Please provide password'],
     minlength: 6,
   },
 
-  isSocialMedia: {
-    type: Boolean,
-    default: false,
+  SocialMedia: {
+    type: String,
+    enum: ['Google', 'Github'],
   },
 
   picture: {
@@ -50,12 +49,13 @@ const UserSchema = new Schema({
 UserSchema.pre('save', async function () {
   console.log(this.modifiedPaths());
   // console.log(this.isModified('password'));
-  if (!this.isModified('password')) return;
+  if (!this.isModified('password') || this.isSocialMedia) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
 UserSchema.methods.comparePassword = async function (incomingPwd) {
+  console.log(this);
   const isMatch = await bcrypt.compare(incomingPwd, this.password);
   return isMatch;
 };
