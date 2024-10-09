@@ -80,9 +80,9 @@ const start = async () => {
     const URI = 'mongodb://localhost:27017/no-cost-emi';
     await connectDB(URI);
     // await connectDB(process.env.MONGODB_URI);
-    app.listen(5000, () => {
-      console.log('APIs are running on port 5000');
-    });
+    // app.listen(5000, () => {
+    //   console.log('APIs are running on port 5000');
+    // });
   } catch (error) {}
 };
 
