@@ -1,6 +1,7 @@
 require('express-async-errors');
+const serverless = require('serverless-http');
 const express = require('express');
-const connectDB = require('./db/connect');
+const connectDB = require('../db/connect');
 const cookieParser = require('cookie-parser');
 const app = express();
 const morgan = require('morgan');
@@ -19,18 +20,18 @@ app.use(
 );
 
 // routers
-const { authRouter } = require('./routes/authRouter');
-const { notFound } = require('./middlewares/notFound');
-const errorHandlerMiddleware = require('./middlewares/allErrorsHandler');
-const CustomError = require('./customError');
+const { authRouter } = require('../routes/authRouter');
+const { notFound } = require('../middlewares/notFound');
+const errorHandlerMiddleware = require('../middlewares/allErrorsHandler');
+const CustomError = require('../customError');
 const { StatusCodes } = require('http-status-codes');
 
 const {
   getGoogleAuthTokens,
   attachCookieToResponse,
   getGitHubAuthTokens,
-} = require('./utils');
-const { cardsRouter } = require('./routes/cardsRouter');
+} = require('../utils');
+const { cardsRouter } = require('../routes/cardsRouter');
 
 app.get('/health', (req, res) => {
   res.status(200).json({ msg: 'Health Okay' });
@@ -85,4 +86,9 @@ const start = async () => {
   } catch (error) {}
 };
 
-start();
+const appStarter = serverless(app);
+
+module.exports.handler = async (event, context) => {
+  await start();
+  return appStarter(event, context);
+};
