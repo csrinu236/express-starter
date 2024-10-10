@@ -27,7 +27,7 @@ const attachCookieToResponse = ({ token, res }) => {
   // max size of a cookie is 4KB, so be carefull while creating jwt token, don't pass huge
   res.cookie('token', token, {
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: 'lax',
     // client side js shouldnot access cookie and hackers can't modify cookie to inject malicious data
     expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
     // cookieParser should be modified cookieParser(process.env.JSW_SECRET_KEY),
