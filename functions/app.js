@@ -14,7 +14,7 @@ app.use(cookieParser());
 // app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
-    origin: [`${process.env.CLIENT_URL}`, 'http://localhost:3000'],
+    origin: [process.env.CLIENT_URL, 'http://localhost:3000'],
     credentials: true,
   })
 );
@@ -61,7 +61,11 @@ tempRouter.get('/auth/google/callback', async (req, res) => {
   try {
     const token = await getGoogleAuthTokens({ code });
     attachCookieToResponse({ token, res });
-    console.log('<================we came here =============> ', { token });
+    console.log(
+      '<================we came here =============> ',
+      { token },
+      { clientURL: process.env.CLIENT_URL }
+    );
   } catch (error) {
     console.log('<================error here=============> ', error.message);
   }
