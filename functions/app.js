@@ -14,8 +14,11 @@ app.use(cookieParser());
 // app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
-    origin: 'https://nocostemi-calcculator.netlify.app',
     credentials: true,
+    origin: [
+      'https://nocostemi-calcculator.netlify.app',
+      'http://localhost:3000',
+    ],
   })
 );
 
@@ -72,14 +75,14 @@ tempRouter.get('/auth/google/callback', async (req, res) => {
     console.log('<================error here=============> ', error.message);
   }
   console.log(res.cookies);
-  return res.status(303).redirect(process.env.CLIENT_URL);
+  return res.redirect(process.env.CLIENT_URL);
 });
 
 tempRouter.get('/auth/github/callback', async (req, res) => {
   const code = req.query.code;
   const token = await getGitHubAuthTokens({ code });
   attachCookieToResponse({ token, res });
-  return res.status(303).redirect(process.env.CLIENT_URL);
+  return res.redirect(process.env.CLIENT_URL);
 });
 
 // routes
