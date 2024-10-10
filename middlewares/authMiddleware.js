@@ -8,7 +8,10 @@ const authorizeUser = (req, res, next) => {
   const { token } = req.cookies;
   console.log({ token });
   if (!token) {
-    throw new CustomError('Please login', StatusCodes.UNAUTHORIZED);
+    throw new CustomError(
+      'Please login, no token came with the request',
+      StatusCodes.UNAUTHORIZED
+    );
   }
   try {
     const isTokenValid = verifyToken({ token });

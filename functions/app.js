@@ -14,10 +14,7 @@ app.use(cookieParser());
 // app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
-    origin: [
-      'https://nocostemi-calcculator.netlify.app',
-      'http://localhost:3000',
-    ],
+    origin: 'https://nocostemi-calcculator.netlify.app',
     credentials: true,
   })
 );
