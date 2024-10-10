@@ -33,25 +33,27 @@ const {
 } = require('../utils');
 const { cardsRouter } = require('../routes/cardsRouter');
 
-app.get('/health', (req, res) => {
+const tempRouter = express.Router();
+
+tempRouter.get('/health', (req, res) => {
   res.status(200).json({ msg: 'Health Okay' });
 });
 
-app.get('/logout', (req, res) => {
+tempRouter.get('/logout', (req, res) => {
   res.cookie('token', null, {
     expires: new Date(new Date().getTime() - 1000),
   });
   return res.redirect(`${process.env.CLIENT_URL}/login`);
 });
 
-app.get('/cookie-check', (req, res) => {
+tempRouter.get('/cookie-check', (req, res) => {
   console.log(req.cookies);
   console.log(req.signedCookies);
   throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
 });
 
 // Entry 3
-app.get('/auth/google/callback', async (req, res) => {
+tempRouter.get('/auth/google/callback', async (req, res) => {
   // Extract code query param from
   const code = req.query.code;
   // Entry 4=> After making token, attack token to cookies
@@ -61,7 +63,7 @@ app.get('/auth/google/callback', async (req, res) => {
   res.redirect(`${process.env.CLIENT_URL}`);
 });
 
-app.get('/auth/github/callback', async (req, res) => {
+tempRouter.get('/auth/github/callback', async (req, res) => {
   const code = req.query.code;
   const token = await getGitHubAuthTokens({ code });
   attachCookieToResponse({ token, res });
@@ -69,26 +71,33 @@ app.get('/auth/github/callback', async (req, res) => {
 });
 
 // routes
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/cards', cardsRouter);
+app.use('/.netlify/functions/app', tempRouter);
+app.use('/.netlify/functions/app/api/v1/auth', authRouter);
+app.use('/.netlify/functions/app/api/v1/cards', cardsRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
 
-const start = async () => {
-  try {
-    // const URI = 'mongodb://localhost:27017/no-cost-emi';
-    // await connectDB(URI);
-    await connectDB(process.env.MONGODB_URI);
-    // app.listen(5000, () => {
-    //   console.log('APIs are running on port 5000');
-    // });
-  } catch (error) {}
-};
+// ================= uncomment for npm run dev
+
+// const start = async () => {
+//   try {
+//     // const URI = 'mongodb://localhost:27017/no-cost-emi';
+//     // await connectDB(URI);
+//     await connectDB(process.env.MONGODB_URI);
+//     app.listen(5000, () => {
+//       console.log('APIs are running on port 5000');
+//     });
+//   } catch (error) {}
+// };
+
+// start();
+
+// ================= uncomment for npm run dev
 
 const appStarter = serverless(app);
 
 module.exports.handler = async (event, context) => {
-  await start();
+  await connectDB(process.env.MONGODB_URI);
   return appStarter(event, context);
 };
