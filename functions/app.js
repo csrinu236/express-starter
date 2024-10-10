@@ -58,16 +58,21 @@ tempRouter.get('/auth/google/callback', async (req, res) => {
   const code = req.query.code;
   // Entry 4=> After making token, attack token to cookies
   // res.redirect will persist the cookie along with response, so cookies will be attached to response
-  const token = await getGoogleAuthTokens({ code });
-  attachCookieToResponse({ token, res });
-  res.redirect(`${process.env.CLIENT_URL}`);
+  try {
+    const token = await getGoogleAuthTokens({ code });
+    attachCookieToResponse({ token, res });
+    console.log('<================we came here =============> ');
+  } catch (error) {
+    console.log('<================error here=============> ', error.message);
+  }
+  res.redirect(process.env.CLIENT_URL);
 });
 
 tempRouter.get('/auth/github/callback', async (req, res) => {
   const code = req.query.code;
   const token = await getGitHubAuthTokens({ code });
   attachCookieToResponse({ token, res });
-  res.redirect(`${process.env.CLIENT_URL}`);
+  res.redirect(process.env.CLIENT_URL);
 });
 
 // routes
