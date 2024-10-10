@@ -61,7 +61,7 @@ tempRouter.get('/auth/google/callback', async (req, res) => {
   try {
     const token = await getGoogleAuthTokens({ code });
     attachCookieToResponse({ token, res });
-    console.log('<================we came here =============> ');
+    console.log('<================we came here =============> ', { token });
   } catch (error) {
     console.log('<================error here=============> ', error.message);
   }
