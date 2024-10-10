@@ -75,7 +75,7 @@ tempRouter.get('/auth/google/callback', async (req, res) => {
     console.log('<================error here=============> ', error.message);
   }
   console.log(res.cookies);
-  return res.redirect(process.env.CLIENT_URL);
+  return res.redirect(`${process.env.CLIENT_URL}/`);
 });
 
 tempRouter.get('/auth/github/callback', async (req, res) => {
