@@ -43,7 +43,7 @@ tempRouter.get('/health', (req, res) => {
   console.log({ middlewareCookie });
 
   res.cookie('healthToken', 'healthToken', {
-    httpOnly: true,
+    httpOnly: false,
     sameSite: 'none',
     expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
     secure: true,
