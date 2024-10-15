@@ -39,8 +39,8 @@ const { cardsRouter } = require('../routes/cardsRouter');
 const tempRouter = express.Router();
 
 tempRouter.get('/health', (req, res) => {
-  const { middlewareCookie } = req.cookies;
-  console.log({ middlewareCookie });
+  const { middlewareCookie, token } = req.cookies;
+  console.log({ token, middlewareCookie });
 
   res.cookie('healthToken', 'healthToken', {
     httpOnly: false,
