@@ -113,7 +113,6 @@ const deplay = (timeout) =>
 const user = async (req, res) => {
   const user = req.user;
   console.log({ user });
-  await deplay(2000);
   res.status(StatusCodes.OK).json({
     msg: 'user verified',
     user,
