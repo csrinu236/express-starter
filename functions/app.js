@@ -47,7 +47,6 @@ tempRouter.get('/health', (req, res) => {
     sameSite: 'none',
     expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
     secure: true,
-    domain: '.netlify.app',
   });
   res.status(200).json({ msg: 'Health Okay' });
 });
