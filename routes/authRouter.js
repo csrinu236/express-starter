@@ -5,10 +5,13 @@ const {
   logout,
   generateGoogleAuthLink,
   generateGithubAuthLink,
+  user,
   verify,
 } = require('../controllers/authController');
+const { authorizeUser } = require('../middlewares/authMiddleware');
 const authRouter = express.Router();
 
+authRouter.get('/user', authorizeUser, user);
 authRouter.post('/login', login);
 authRouter.post('/verify', verify);
 // Entry 1

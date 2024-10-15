@@ -103,6 +103,23 @@ const login = async (req, res) => {
   });
 };
 
+const deplay = (timeout) =>
+  new Promise((res, rej) => {
+    setTimeout(() => {
+      res('');
+    }, timeout);
+  });
+
+const user = async (req, res) => {
+  const user = req.user;
+  console.log({ user });
+  await deplay(2000);
+  res.status(StatusCodes.OK).json({
+    msg: 'user verified',
+    user,
+  });
+};
+
 const register = async (req, res) => {
   const { email } = req.body;
   const emailAlreadyExists = await User.findOne({ email });
@@ -163,4 +180,5 @@ module.exports = {
   verify,
   generateGoogleAuthLink,
   generateGithubAuthLink,
+  user,
 };

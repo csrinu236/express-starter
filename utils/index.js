@@ -38,7 +38,7 @@ const attachCookieToResponse = ({ token, res }) => {
     // the server will add a digital signature to the cookie's value before sending it to the client's
     // browser.This digital signature is generated using a secret key known only to the server.
     // signed: true,
-    secure: process.env.NODE_ENV === 'production', // https false in development
+    secure: true, // https false in development
   });
 };
 

@@ -39,15 +39,6 @@ const { cardsRouter } = require('../routes/cardsRouter');
 const tempRouter = express.Router();
 
 tempRouter.get('/health', (req, res) => {
-  const { middlewareCookie, token, healthToken } = req.cookies;
-  console.log({ token, middlewareCookie, healthToken });
-
-  res.cookie('healthToken', 'healthToken', {
-    httpOnly: true,
-    sameSite: 'none',
-    expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
-    secure: true,
-  });
   res.status(200).json({ msg: 'Health Okay' });
 });
 
