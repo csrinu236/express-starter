@@ -149,7 +149,7 @@ const getGitHubAuthTokens = async ({ code }) => {
     code,
     client_id: process.env.GITHUB_CLIENT_ID,
     client_secret: process.env.GITHUB_CLIENT_SECRET,
-    redirect_uri: `${process.env.GITHUB_REDIRECT_URI}`,
+    redirect_uri: process.env.GITHUB_REDIRECT_URI,
     grant_type: 'authorization_code',
   };
 
@@ -166,6 +166,7 @@ const getGitHubAuthTokens = async ({ code }) => {
     });
 
     const { access_token } = data;
+    console.log('=================================>', { access_token });
 
     // Fetch the GitHub user's profile data using the access token
     const { data: userData } = await axios({
@@ -175,7 +176,7 @@ const getGitHubAuthTokens = async ({ code }) => {
         Authorization: `Bearer ${access_token}`,
       },
     });
-    console.log('=================================>', userData);
+    console.log('=================================>', { userData });
 
     let { email, name, id: githubId, avatar_url } = userData;
 
