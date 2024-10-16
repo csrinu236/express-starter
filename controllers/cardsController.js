@@ -4,7 +4,7 @@ const CardsCollection = require('../models/Card.js');
 
 const getAllCards = async (req, res) => {
   const { userId } = req.user;
-  const cards = await CardsCollection.find({});
+  const cards = await CardsCollection.find({ userId });
 
   res.status(StatusCodes.OK).json({
     cards,
