@@ -103,13 +103,6 @@ const login = async (req, res) => {
   });
 };
 
-const deplay = (timeout) =>
-  new Promise((res, rej) => {
-    setTimeout(() => {
-      res('');
-    }, timeout);
-  });
-
 const user = async (req, res) => {
   const user = req.user;
   console.log({ user });

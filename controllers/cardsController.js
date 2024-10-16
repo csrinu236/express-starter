@@ -6,7 +6,7 @@ const getAllCards = async (req, res) => {
   const { userId } = req.user;
   const cards = await CardsCollection.find({});
 
-  res.status(StatusCodes.CREATED).json({
+  res.status(StatusCodes.OK).json({
     cards,
   });
 };
