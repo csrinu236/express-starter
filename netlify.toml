@@ -1,5 +1,6 @@
 [build]
     functions="functions"
+    included_files = ["build/**"]
 [[redirects]]
     from = "/*"
     status = 200
