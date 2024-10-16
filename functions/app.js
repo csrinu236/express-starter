@@ -4,6 +4,7 @@ const express = require('express');
 const connectDB = require('../db/connect');
 const cookieParser = require('cookie-parser');
 const app = express();
+const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
 // const bodyParser = require('body-parser');
@@ -37,6 +38,20 @@ const {
 const { cardsRouter } = require('../routes/cardsRouter');
 
 const tempRouter = express.Router();
+
+console.log(path.join(process.cwd(), 'build', `index.html`));
+
+tempRouter.get('/', async (req, res) => {
+  console.log('===================================');
+  res.sendFile(path.join(process.cwd(), 'build', `index.html`));
+});
+
+tempRouter.get('/login', async (req, res) => {
+  console.log('===================================');
+  res.sendFile(path.join(process.cwd(), 'build', `login.html`));
+});
+
+tempRouter.use('/_next', express.static(process.cwd() + '/build/_next'));
 
 tempRouter.get('/health', (req, res) => {
   res.status(200).json({ msg: 'Health Okay' });
@@ -86,9 +101,9 @@ tempRouter.get('/auth/github/callback', async (req, res) => {
 });
 
 // routes
-app.use('/.netlify/functions/app', tempRouter);
-app.use('/.netlify/functions/app/api/v1/auth', authRouter);
-app.use('/.netlify/functions/app/api/v1/cards', cardsRouter);
+app.use('/', tempRouter);
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/cards', cardsRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
