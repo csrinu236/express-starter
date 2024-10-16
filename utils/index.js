@@ -220,7 +220,7 @@ const getGitHubAuthTokens = async ({ code }) => {
       }
     );
 
-    console.log(user);
+    console.log({ user });
 
     // Generate JWT token for the user
     const { token } = createJwtToken({ user });

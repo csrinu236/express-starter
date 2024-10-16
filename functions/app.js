@@ -122,15 +122,19 @@ tempRouter.get('/auth/google/callback', async (req, res) => {
   } catch (error) {
     console.log('<================error here=============> ', error.message);
   }
-  console.log(res.cookies);
-  return res.redirect(`${process.env.CLIENT_URL}/`);
+  return res.redirect(`${process.env.CLIENT_URL}`);
 });
 
 tempRouter.get('/auth/github/callback', async (req, res) => {
   const code = req.query.code;
-  const token = await getGitHubAuthTokens({ code });
-  attachCookieToResponse({ token, res });
-  return res.redirect(process.env.CLIENT_URL);
+  try {
+    const token = await getGitHubAuthTokens({ code });
+    attachCookieToResponse({ token, res });
+  } catch (error) {
+    console.log('<================error here=============> ', error.message);
+  }
+
+  return res.redirect(`${process.env.CLIENT_URL}`);
 });
 
 // routes
