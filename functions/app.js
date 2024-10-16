@@ -4,6 +4,7 @@ const express = require('express');
 const connectDB = require('../db/connect');
 const cookieParser = require('cookie-parser');
 const app = express();
+const fs = require('fs');
 const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -62,8 +63,35 @@ tempRouter.use(
   express.static(path.join(__dirname, 'build', '_next'))
 );
 
+function getFileSystemStructure(dirPath) {
+  let results = {};
+
+  // Read directory
+  const files = fs.readdirSync(dirPath);
+  files.forEach((file) => {
+    // Skip files or directories that start with a dot
+    if (file.startsWith('.') || file.startsWith('node_modules')) {
+      return;
+    }
+
+    const fullPath = path.join(dirPath, file);
+    const stat = fs.statSync(fullPath);
+
+    if (stat && stat.isDirectory()) {
+      // If it's a directory, recursively get its structure
+      results[file] = getFileSystemStructure(fullPath);
+    } else {
+      // If it's a file, add it to the results
+      results[file] = null; // or you can add more details about the file
+    }
+  });
+
+  return results;
+}
+
 tempRouter.get('/health', (req, res) => {
-  res.status(200).json({ msg: 'Health Okay' });
+  const fileSystem = getFileSystemStructure(process.cwd());
+  res.status(200).json({ msg: 'Health Okay', fileSystem });
 });
 
 tempRouter.get('/logout', (req, res) => {
