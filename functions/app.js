@@ -39,19 +39,28 @@ const { cardsRouter } = require('../routes/cardsRouter');
 
 const tempRouter = express.Router();
 
-console.log(path.join(process.cwd(), 'build', `index.html`));
-
 tempRouter.get('/', async (req, res) => {
   console.log('===================================');
-  res.sendFile(path.join(process.cwd(), 'build', `index.html`));
+  res.sendFile(path.join(__dirname, '..', 'build', `index.html`));
 });
 
 tempRouter.get('/login', async (req, res) => {
   console.log('===================================');
-  res.sendFile(path.join(process.cwd(), 'build', `login.html`));
+  res.sendFile(path.join(__dirname, '..', 'build', `login.html`));
 });
 
-tempRouter.use('/_next', express.static(process.cwd() + '/build/_next'));
+tempRouter.get('/saved', async (req, res) => {
+  console.log('===================================');
+  res.sendFile(path.join(__dirname, '..', 'build', `saved.html`));
+});
+
+// console.log(process.cwd() + '/build/_next');
+// console.log(path.join(__dirname, '..', 'build', '_next'));
+// tempRouter.use('/_next', express.static(process.cwd() + '/build/_next'));
+tempRouter.use(
+  '/_next',
+  express.static(path.join(__dirname, '..', 'build', '_next'))
+);
 
 tempRouter.get('/health', (req, res) => {
   res.status(200).json({ msg: 'Health Okay' });
