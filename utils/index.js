@@ -160,7 +160,6 @@ const getGitHubAuthTokens = async ({ code }) => {
       url: rootUrl,
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json', // GitHub returns JSON when this header is set
       },
       data: values,
     });
