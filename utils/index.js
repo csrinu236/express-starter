@@ -144,6 +144,7 @@ const getGoogleAuthTokens = async ({ code }) => {
 };
 
 const getGitHubAuthTokens = async ({ code }) => {
+  console.log({ code });
   const rootUrl = 'https://github.com/login/oauth/access_token';
   const values = {
     code,
@@ -152,6 +153,7 @@ const getGitHubAuthTokens = async ({ code }) => {
     redirect_uri: process.env.GITHUB_REDIRECT_URI,
     grant_type: 'authorization_code',
   };
+  console.log(values);
 
   try {
     // Request access token from GitHub

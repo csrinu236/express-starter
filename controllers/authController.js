@@ -41,7 +41,7 @@ const generateGithubAuthLink = async (req, res) => {
   const rootUrl = 'https://github.com/login/oauth/authorize';
 
   const options = {
-    redirect_uri: `${process.env.GITHUB_REDIRECT_URI}`,
+    redirect_uri: process.env.GITHUB_REDIRECT_URI,
     client_id: process.env.GITHUB_CLIENT_ID,
     scope: ['read:user', 'user:email'].join(' '), // Scopes to get user profile and email
     allow_signup: 'true', // Allows users to sign up if they don't have a GitHub account
