@@ -153,18 +153,18 @@ const verify = async (req, res) => {
   const { email_token, email } = req.body;
   const user = await User.findOne({ email });
   if (!user || user?.emailVerificationString !== email_token) {
-    throw new CustomError('invalid_request', 400);
+    throw new CustomError('Invalid_request', 400);
   }
 
   if (user?.emailVerified) {
-    throw new CustomError('already_verified', 400);
+    throw new CustomError('Email already verified', 400);
   }
 
   user.emailVerified = true;
   await user.save();
 
-  res.status(StatusCodes.CREATED).json({
-    msg: 'email verified please login',
+  res.status(StatusCodes.OK).json({
+    msg: 'Email verified please login',
   });
 };
 
