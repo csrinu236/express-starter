@@ -119,7 +119,16 @@ const register = async (req, res) => {
     throw new CustomError('User with this Email already exists', 400);
   }
   const id = crypto.randomBytes(24).toString('hex');
-  const user = await User.create({ ...req.body, emailVerificationString: id }); // this one goes to pre save hook
+  const user = await User.findOneAndUpdate(
+    {
+      email,
+    },
+    { ...req.body, emailVerificationString: id },
+    {
+      new: true,
+      upsert: true,
+    }
+  ); // this one goes to pre save hook
   const link = `/verify?email_token=${id}&email=${email}`;
   let mailOptions = {
     from: {
