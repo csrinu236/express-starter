@@ -115,7 +115,7 @@ const login = async (req, res) => {
   const { token, jwtPayload } = createJwtToken({ user });
   attachCookieToResponse({ token, res });
   res.status(StatusCodes.OK).json({
-    message: 'successfully logged in',
+    msg: 'successfully logged in',
     user: jwtPayload,
   });
 };
