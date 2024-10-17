@@ -235,7 +235,7 @@ const getGitHubAuthTokens = async ({ code }) => {
 };
 
 const sendEmailVerificationLink = async ({ email, id }) => {
-  const link = `/verify?email_token=${id}&email=${email}`;
+  const link = `https://no-cost-emi-api.netlify.app/verify?email_token=${id}&email=${email}`;
   let mailOptions = {
     from: {
       name: 'No Cost EMI',
