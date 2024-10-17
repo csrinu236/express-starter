@@ -15,7 +15,6 @@ const createJwtToken = ({ user }) => {
   const jwtPayload = {
     name: user?.name, // to say Hi username on home page
     userId: user?._id, // must needed to access user specific cartItems and Reviews
-    role: user?.role,
     picture: user?.picture,
     // since we have role based authentications, we need this
   };

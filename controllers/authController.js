@@ -97,7 +97,7 @@ const login = async (req, res) => {
     );
   }
 
-  if (user?.SocialMedia) {
+  if (!user?.password) {
     throw new CustomError(
       `Login with ${user.SocialMedia}`,
       StatusCodes.BAD_REQUEST
