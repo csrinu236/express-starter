@@ -234,8 +234,6 @@ const getGitHubAuthTokens = async ({ code }) => {
 };
 
 const sendEmailVerificationLink = async ({ email, id }) => {
-  const id = crypto.randomBytes(24).toString('hex');
-
   const link = `/verify?email_token=${id}&email=${email}`;
   let mailOptions = {
     from: {
