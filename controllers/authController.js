@@ -120,7 +120,7 @@ const register = async (req, res) => {
   }
   const id = crypto.randomBytes(24).toString('hex');
   const user = await User.create({ ...req.body, emailVerificationString: id }); // this one goes to pre save hook
-  const link = `${process.env.CLIENT_URL}/verify?email_token=${id}&email=${email}`;
+  const link = `/verify?email_token=${id}&email=${email}`;
   let mailOptions = {
     from: {
       name: 'No Cost EMI',
