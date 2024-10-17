@@ -3,6 +3,7 @@ const CustomError = require('../customError');
 const { StatusCodes } = require('http-status-codes');
 const axios = require('axios');
 const UsersCollection = require('../models/User');
+const { transporter } = require('./transporter');
 
 const verifyToken = ({ token }) => {
   return jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -232,6 +233,24 @@ const getGitHubAuthTokens = async ({ code }) => {
   }
 };
 
+const sendEmailVerificationLink = async ({ email, id }) => {
+  const id = crypto.randomBytes(24).toString('hex');
+
+  const link = `/verify?email_token=${id}&email=${email}`;
+  let mailOptions = {
+    from: {
+      name: 'No Cost EMI',
+      address: 'csrinu236@gmail.com',
+    },
+    to: email,
+    subject: 'Verify Your Email',
+    html: getHtml({ link }),
+  };
+
+  let result = await transporter.sendMail(mailOptions);
+  return result;
+};
+
 module.exports = {
   verifyToken,
   createJwtToken,
@@ -239,6 +258,7 @@ module.exports = {
   checkPermission,
   getGoogleAuthTokens,
   getGitHubAuthTokens,
+  sendEmailVerificationLink,
 };
 
 // Various Scopes:-

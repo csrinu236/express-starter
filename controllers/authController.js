@@ -2,7 +2,11 @@ const CustomError = require('../customError.js');
 const User = require('../models/User.js');
 const { StatusCodes } = require('http-status-codes');
 const jwt = require('jsonwebtoken');
-const { createJwtToken, attachCookieToResponse } = require('../utils/index.js');
+const {
+  createJwtToken,
+  attachCookieToResponse,
+  sendEmailVerificationLink,
+} = require('../utils/index.js');
 const crypto = require('crypto');
 const { transporter } = require('../utils/transporter.js');
 const getHtml = require('../utils/getHtml.js');
@@ -74,8 +78,21 @@ const login = async (req, res) => {
   }
 
   if (!user?.emailVerified) {
+    const id = crypto.randomBytes(24).toString('hex');
+    const user = await User.findOneAndUpdate(
+      {
+        email,
+      },
+      { emailVerificationString: id },
+      {
+        new: true,
+        upsert: true,
+      }
+    ); // this one goes to pre save hook
+    console.log({ user });
+    await sendEmailVerificationLink({ email, id });
     throw new CustomError(
-      'Email not verified, please verify your email',
+      'Email not verified, Verification link has been sent, please verify your email',
       StatusCodes.NOT_FOUND
     );
   }
@@ -123,24 +140,13 @@ const register = async (req, res) => {
     {
       email,
     },
-    { ...req.body, emailVerificationString: id },
+    { emailVerificationString: id },
     {
       new: true,
       upsert: true,
     }
   ); // this one goes to pre save hook
-  const link = `/verify?email_token=${id}&email=${email}`;
-  let mailOptions = {
-    from: {
-      name: 'No Cost EMI',
-      address: 'csrinu236@gmail.com',
-    },
-    to: email,
-    subject: 'Verify Your Email',
-    html: getHtml({ link }),
-  };
-
-  let result = await transporter.sendMail(mailOptions);
+  await sendEmailVerificationLink({ email, id });
 
   res.status(StatusCodes.CREATED).json({
     msg: 'user registered, please verify your email to continue',
