@@ -4,6 +4,7 @@ const { StatusCodes } = require('http-status-codes');
 const axios = require('axios');
 const UsersCollection = require('../models/User');
 const { transporter } = require('./transporter');
+const getHtml = require('./getHtml');
 
 const verifyToken = ({ token }) => {
   return jwt.verify(token, process.env.JWT_SECRET_KEY);
