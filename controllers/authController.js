@@ -136,7 +136,12 @@ const register = async (req, res) => {
     throw new CustomError('User with this Email already exists', 400);
   }
   const id = crypto.randomBytes(24).toString('hex');
-  const user = await User.create({ email, name, password });
+  const user = await User.create({
+    email,
+    name,
+    password,
+    emailVerificationString: id,
+  });
   await sendEmailVerificationLink({ email, id });
 
   res.status(StatusCodes.CREATED).json({
