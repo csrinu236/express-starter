@@ -34,6 +34,11 @@ const cardSchema = new mongoose.Schema({
     required: true,
     enum: ['noCost', 'interest'],
   },
+  loanType: {
+    type: String,
+    required: true,
+    enum: ['creditcard', 'loan'],
+  },
   createdAt: {
     type: Date,
     default: Date.now,
