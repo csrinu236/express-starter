@@ -14,9 +14,23 @@ const getAllCards = async (req, res) => {
 const addCard = async (req, res) => {
   const { userId } = req.user;
 
-  const { interest, months, processingFee, loanTaken, emiType, cardId } =
-    req.body;
-  if (!interest || !months || !processingFee || !loanTaken || !emiType) {
+  const {
+    interest,
+    months,
+    processingFee,
+    loanTaken,
+    emiType,
+    cardId,
+    loanType,
+  } = req.body;
+  if (
+    !interest ||
+    !months ||
+    !processingFee ||
+    !loanTaken ||
+    !emiType ||
+    !loanType
+  ) {
     throw new CustomError('Invalid Request', StatusCodes.BAD_REQUEST);
   }
 
@@ -42,6 +56,7 @@ const addCard = async (req, res) => {
     processingFee,
     loanTaken,
     emiType,
+    loanType,
   });
 
   res.status(StatusCodes.OK).json({
