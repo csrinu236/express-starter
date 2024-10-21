@@ -46,7 +46,14 @@ const cardSchema = new mongoose.Schema({
 });
 
 cardSchema.index(
-  { loanTaken: 1, interest: 1, months: 1, processingFee: 1, emiType: 1 },
+  {
+    loanTaken: 1,
+    interest: 1,
+    months: 1,
+    processingFee: 1,
+    emiType: 1,
+    userId,
+  },
   { unique: true }
 );
 
