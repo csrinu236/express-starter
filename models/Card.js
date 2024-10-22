@@ -52,7 +52,7 @@ cardSchema.index(
     months: 1,
     processingFee: 1,
     emiType: 1,
-    userId,
+    userId: 1,
   },
   { unique: true }
 );
