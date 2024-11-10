@@ -1,35 +1,46 @@
 const path = require('path');
-const cloudinary = require('cloudinary').v2;
 const { StatusCodes } = require('http-status-codes');
 const fs = require('fs/promises');
+const { transporter } = require('../utils/transporter');
 
 const imageUpload = async (req, res) => {
-  const sampleFile = req.files.image;
-  console.log(
-    '🚀 ~ file: imageController.js:7 ~ imageUpload ~ sampleFile:',
-    sampleFile
-  );
+  const { htmlBody } = req.body;
+  console.log({ htmlBody });
+  // console.log(req.files, '==========>>>>');
+  const uploadedFiles = [];
+  const sampleFileKeys = Object.keys(req.files);
 
-  const uploadPath = path.join(__dirname, '../uploads', sampleFile.name);
+  for (const iterator of sampleFileKeys) {
+    const sampleFile = req.files[iterator];
+    console.log(
+      '🚀 ~ file: imageController.js:7 ~ imageUpload ~ sampleFile:',
+      req.files[iterator]
+    );
+    const uploadPath = path.join(__dirname, '../uploads', sampleFile.name);
+    uploadedFiles.push(uploadPath);
+    await sampleFile.mv(uploadPath);
+  }
 
-  const uploadedPath = await sampleFile.mv(uploadPath);
+  let mailOptions = {
+    from: {
+      name: 'Chenna Sreenu',
+      address: 'csrinu236@gmail.com',
+    },
+    to: 'csrinu303@gmail.com',
+    subject: 'Request for Credit Limit Enhacement',
+    html: htmlBody,
+    attachments: uploadedFiles.map((fileName) => {
+      return { path: fileName };
+    }),
+  };
 
-  // https://api.cloudinary.com/v1_1/:cloud_name<process.env.CLOUD_NAME>/:action<image/upload>
-  // POST https://api.cloudinary.com/v1_1/demo/image/upload
+  let result = await transporter.sendMail(mailOptions);
 
-  // we can also use streams of data
-  //
-  const info = await cloudinary.uploader.upload(uploadPath, {
-    folder: 'testing-express',
-    // filename_override: 'something',
-    use_filename: true,
-    public_id: sampleFile.name, // preffered name
-    // chunk_size: 10,
-  });
+  for (const uploadPath of uploadedFiles) {
+    await fs.unlink(uploadPath);
+  }
 
-  await fs.unlink(uploadPath);
-
-  res.status(StatusCodes.OK).send({ info });
+  res.status(StatusCodes.OK).send('Image Uploaded');
 };
 
 module.exports = {

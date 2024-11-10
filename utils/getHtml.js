@@ -66,7 +66,6 @@ module.exports = () => {
       >
         <li>ICICI Credit Card: ₹300,000</li>
         <li>Axis Credit Card: ₹200,000</li>
-        <li>HDFC Credit Card: ₹180,000</li>
         <li>RBL Credit Card: ₹200,000</li>
       </ol>
       <p style="color: #333; line-height: 1.6; font-size: 16px">
