@@ -1,6 +1,7 @@
 require('express-async-errors');
 const serverless = require('serverless-http');
 const express = require('express');
+const path = require('path');
 const connectDB = require('../db/connect');
 const app = express();
 const morgan = require('morgan');
@@ -25,6 +26,8 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(fileUpload());
+
+app.use('/', express.static(path.join(__dirname, 'build')));
 
 app.get('/send-mail', async (req, res) => {
   // Check this video: https://www.youtube.com/watch?v=QDIOBsMBEI0
