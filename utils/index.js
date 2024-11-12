@@ -72,6 +72,12 @@ const getGoogleUser = async ({ access_token, id_token }) => {
 const getGoogleAuthTokens = async ({ code }) => {
   // Your app exchanges the authorization code for an access token and a refresh token by sending a POST request to Google’s OAuth 2.0 server, including your client ID, client secret, and the authorization code.
 
+  const scope = [
+    'https://www.googleapis.com/auth/gmail.send',
+    'https://www.googleapis.com/auth/gmail.modify',
+    'https://www.googleapis.com/auth/userinfo.email', // for accessing email info
+  ].join(' ');
+
   const rootUrl = 'https://oauth2.googleapis.com/token';
   const values = {
     code,
@@ -79,6 +85,7 @@ const getGoogleAuthTokens = async ({ code }) => {
     client_secret: process.env.GOOGLE_CLIENT_SECRET,
     redirect_uri: process.env.GOOGLE_REDIRECT_URI,
     grant_type: 'authorization_code',
+    scope,
   };
 
   try {
