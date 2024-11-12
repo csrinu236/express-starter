@@ -4,21 +4,23 @@ const fs = require('fs/promises');
 const { transporter } = require('../utils/transporter');
 
 const imageUpload = async (req, res) => {
-  const { htmlBody } = req.body;
-  console.log({ htmlBody });
-  // console.log(req.files, '==========>>>>');
-  const uploadedFiles = [];
-  const sampleFileKeys = Object.keys(req.files);
+  const { htmlBody, email } = req.body;
+  console.log({ email });
 
-  for (const iterator of sampleFileKeys) {
-    const sampleFile = req.files[iterator];
-    console.log(
-      '🚀 ~ file: imageController.js:7 ~ imageUpload ~ sampleFile:',
-      req.files[iterator]
-    );
-    const uploadPath = path.join(__dirname, '../uploads', sampleFile.name);
-    uploadedFiles.push(uploadPath);
-    await sampleFile.mv(uploadPath);
+  const uploadedFiles = [];
+  const sampleFileKeys = req?.files ? Object.keys(req.files) : [];
+
+  if (sampleFileKeys.length > 0) {
+    for (const iterator of sampleFileKeys) {
+      const sampleFile = req.files[iterator];
+      console.log(
+        '🚀 ~ file: imageController.js:7 ~ imageUpload ~ sampleFile:',
+        req.files[iterator]
+      );
+      const uploadPath = path.join(__dirname, '../uploads', sampleFile.name);
+      uploadedFiles.push(uploadPath);
+      await sampleFile.mv(uploadPath);
+    }
   }
 
   let mailOptions = {
@@ -26,7 +28,7 @@ const imageUpload = async (req, res) => {
       name: 'Chenna Sreenu',
       address: 'csrinu236@gmail.com',
     },
-    to: 'csrinu303@gmail.com',
+    to: email,
     subject: 'Request for Credit Limit Enhacement',
     html: htmlBody,
     attachments: uploadedFiles.map((fileName) => {
