@@ -12,7 +12,8 @@ const authorizeUser = (req, res, next) => {
   }
   try {
     const isTokenValid = verifyToken({ token });
-    const { role, userId, name } = isTokenValid;
+    const { role, userId, name, email } = isTokenValid;
+
     // role === 'admin' check is done in authorizeAdmin middleware
     // so that this middleware can be used for single user specific routes
     // if (role !== 'admin') {
@@ -22,7 +23,7 @@ const authorizeUser = (req, res, next) => {
     //   );
     // }
     // passing data to next middleware from decrypting token for example to get data associated with Id
-    req.user = { role, userId, name };
+    req.user = { role, name, email };
     next();
   } catch (error) {
     throw new CustomError(

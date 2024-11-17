@@ -11,10 +11,12 @@ const verifyToken = ({ token }) => {
 };
 
 const createJwtToken = ({ user }) => {
+  console.log('createJwtToken', { user });
   // jwtPayload is the only thing we have inorder to access authenticated routes
   const jwtPayload = {
-    name: user.name, // to say Hi username on home page
-    userId: user._id, // must needed to access user specific cartItems and Reviews
+    name: user.name,
+    userId: user._id,
+    email: user.email,
   };
   const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -36,8 +38,8 @@ const attachCookieToResponse = ({ token, res }) => {
     // the server will add a digital signature to the cookie's value before sending it to the client's
     // browser.This digital signature is generated using a secret key known only to the server.
     // signed: true,
-    secure: process.env.NODE_ENV === 'production', // https false in development
-    // secure: true,
+    // secure: process.env.NODE_ENV === 'production', // https false in development
+    secure: true,
     sameSite: 'none', // lax, none, strict
   });
 };
@@ -158,4 +160,5 @@ module.exports = {
   checkPermission,
   getGoogleUser,
   getGoogleAuthTokens,
+  USERS_SESSIONS,
 };

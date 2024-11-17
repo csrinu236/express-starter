@@ -1,9 +1,15 @@
 const express = require('express');
-const { login, register, logout } = require('../controllers/authController');
-const appRouter = express.Router();
+const {
+  logout,
+  generateGoogleAuthLink,
+} = require('../controllers/authController');
+const { authorizeUser } = require('../middlewares/authMiddleware');
+const authRouter = express.Router();
 
-appRouter.post('/login', login);
-appRouter.post('/register', register);
-appRouter.get('/logout', logout);
+authRouter.get('/logout', logout);
+authRouter.get('/google/login', generateGoogleAuthLink);
+authRouter.get('/user', authorizeUser, (req, res) => {
+  return res.json(req.user);
+});
 
-module.exports = { appRouter };
+module.exports = { authRouter };

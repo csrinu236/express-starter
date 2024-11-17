@@ -2,10 +2,7 @@ const path = require('path');
 const { StatusCodes } = require('http-status-codes');
 const fs = require('fs/promises');
 const axios = require('axios');
-const {
-  transporter,
-  createTransporterForUser,
-} = require('../utils/transporter');
+const { createTransporterForUser } = require('../utils/transporter');
 const { USERS_SESSIONS } = require('../utils');
 
 async function getAccessToken(refreshToken) {
@@ -58,13 +55,37 @@ const imageUpload = async (req, res) => {
     }
   }
 
-  let mailOptions = {
+  console.log('==============> here111 =========>');
+
+  const { transporter, name, senderEmail } = await createTransporterForUser(
+    req?.user?.userId
+  );
+
+  console.log('==============> here222 =========>');
+
+  transporter.set('oauth2_provision_cb', async (user, renew, callback) => {
+    console.log({ user, renew });
+    let { access_token } = USERS_SESSIONS.get(user);
+    if (!access_token) {
+      return callback(new Error('Unknown user'));
+    } else {
+      console.log('==============> CallBack =========>');
+      const { refresh_token } = USERS_SESSIONS.get(user);
+      access_token = await getAccessToken(refresh_token);
+      USERS_SESSIONS.set(user, { refresh_token, access_token });
+      console.log('==============> CallBack - 2 =========>');
+
+      return callback(null, access_token);
+    }
+  });
+
+  const mailOptions = {
     from: {
-      name: 'Chenna Sreenu',
-      address: 'csrinu236@gmail.com',
+      name,
+      address: senderEmail,
     },
     auth: {
-      user: 'csrinu236@gmail.com',
+      user: senderEmail,
       accessToken:
         'ya29.GlvpBbERNZcel53gIAg1s7mTmFzog5MF3RYFXlCruB1gjAOPHbe0a75wGYid919jCffHxurGtb7NEHIvYBVXpISFGH_YB3mNynmRNdeXw4z5z_6Bl5sf8PC9bG5J',
     },
@@ -75,28 +96,6 @@ const imageUpload = async (req, res) => {
       return { path: fileName };
     }),
   };
-  console.log('==============> here111 =========>');
-
-  const { transporter, refresh_token } = await createTransporterForUser(
-    req.user.email
-  );
-
-  console.log('==============> here222 =========>');
-
-  transporter.set('oauth2_provision_cb', async (user, renew, callback) => {
-    console.log({ user, renew });
-    let access_token =
-      'ya29.a0AeDClZBnqnaQxSvDBRxEHLToqGtigmuTXjKpjYftf5Mkii4GtMfekP5V_I05rLX6bwVGcqEVbJinmf63LZezAuxPEll16_PsxflqjZfPkhLvQUzVT3jeg_ynUybo2KRHYqJyCEZNQusaEC9VV81Csd7UpOJxVj2AG512ZVk_aCgYKAesSARMSFQHGX2MiIw_Hi3ijuGBnG8lbIrNgRA0175';
-    // let { access_token, refresh_token } = USERS_SESSIONS.get(user);
-    if (!access_token) {
-      return callback(new Error('Unknown user'));
-    } else {
-      console.log('==============> CallBack =========>');
-      const access_token = await getAccessToken(refresh_token);
-      // USERS_SESSIONS.set();
-      return callback(null, access_token);
-    }
-  });
 
   let result = await transporter.sendMail(mailOptions);
 

@@ -25,27 +25,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function getAccessTokenUsingRefreshToken(refreshToken) {
-  const tokenUrl = 'https://oauth2.googleapis.com/token';
-  const params = {
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    client_secret: process.env.GOOGLE_CLIENT_SECRET,
-    refresh_token: refreshToken,
-    grant_type: 'refresh_token',
-  };
+const createTransporterForUser = async (userId) => {
+  const { access_token, refresh_token, email, name } =
+    await UsersCollection.findOne({
+      userId,
+    });
 
-  const { data } = await axios.post(tokenUrl, null, { params });
-  return data.access_token;
-}
-
-const createTransporterForUser = async (email) => {
-  const { access_token, refresh_token } = await UsersCollection.findOne({
-    email,
-  });
-
-  console.log({ access_token, refresh_token });
+  console.log({ access_token, refresh_token, email });
+  USERS_SESSIONS.set(email, { access_token, refresh_token });
   if (!access_token || !refresh_token) {
-    throw new Error(`No tokens found for user: ${email}`);
+    throw new Error(`No tokens found for user`);
   }
 
   const transporter = nodemailer.createTransport({
@@ -63,7 +52,16 @@ const createTransporterForUser = async (email) => {
     },
   });
 
-  return { transporter, refresh_token };
+  await transporter
+    .verify()
+    .then((e) => {
+      console.log({ success: e });
+    })
+    .catch((e) => {
+      Promise.reject(e);
+    });
+
+  return { transporter, refresh_token, name, senderEmail: email };
 };
 
-module.exports = { transporter, createTransporterForUser };
+module.exports = { createTransporterForUser };
