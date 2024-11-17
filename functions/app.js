@@ -13,8 +13,8 @@ const fileUpload = require('express-fileupload');
 
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
     credentials: true,
+    origin: ['http://localhost:3000'],
   })
 );
 app.use(express.json()); // middleware for handling json body, express have their own body parser.
