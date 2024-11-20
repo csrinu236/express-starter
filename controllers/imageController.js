@@ -98,8 +98,7 @@ const imageUpload = async (req, res) => {
     },
     auth: {
       user: senderEmail,
-      accessToken:
-        'ya29.GlvpBbERNZcel53gIAg1s7mTmFzog5MF3RYFXlCruB1gjAOPHbe0a75wGYid919jCffHxurGtb7NEHIvYBVXpISFGH_YB3mNynmRNdeXw4z5z_6Bl5sf8PC9bG5J',
+      accessToken: USERS_SESSIONS.get(senderEmail).access_token,
     },
     to: email,
     subject: 'Request for Credit Limit Enhacement',
