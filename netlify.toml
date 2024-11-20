@@ -1,7 +1,7 @@
 [build]
     functions="functions"
-    included_files = ["functions/build/*"]
-    publish = ["functions/build", 'functions/uploads']
+    included_files = ["functions/build/*", "functions/uploads/*"]
+    publish = "functions/build"
 [[redirects]]
     from = "/*"
     status = 200
