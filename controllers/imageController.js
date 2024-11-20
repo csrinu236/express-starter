@@ -42,7 +42,7 @@ const imageUpload = async (req, res) => {
   const uploadedFiles = [];
   const sampleFileKeys = req?.files ? Object.keys(req.files) : [];
 
-  const uploadsDir = path.join(__dirname, 'controllers', 'uploads');
+  const uploadsDir = path.join('/tmp', 'uploads');
 
   console.log({ uploadsDir });
 
@@ -61,7 +61,7 @@ const imageUpload = async (req, res) => {
         '🚀 ~ file: imageController.js:7 ~ imageUpload ~ sampleFile:',
         req.files[iterator]
       );
-      const uploadPath = path.join(__dirname, 'uploads', sampleFile.name);
+      const uploadPath = path.join('/tmp', 'uploads', sampleFile.name);
       uploadedFiles.push(uploadPath);
       await sampleFile.mv(uploadPath);
     }
