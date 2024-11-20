@@ -42,7 +42,7 @@ const imageUpload = async (req, res) => {
   const uploadedFiles = [];
   const sampleFileKeys = req?.files ? Object.keys(req.files) : [];
 
-  const uploadsDir = path.join(__dirname, 'uploads');
+  const uploadsDir = path.join(__dirname, 'controllers', 'uploads');
 
   console.log({ uploadsDir });
 
