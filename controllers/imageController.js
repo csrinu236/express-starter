@@ -42,6 +42,16 @@ const imageUpload = async (req, res) => {
   const uploadedFiles = [];
   const sampleFileKeys = req?.files ? Object.keys(req.files) : [];
 
+  const uploadsDir = path.join(__dirname, 'uploads');
+
+  try {
+    // Ensure the directory exists
+    await fs.mkdir(uploadsDir, { recursive: true });
+    console.log(`uploadsDir created: ${uploadsDir}`);
+  } catch (err) {
+    console.error('Error creating uploads directory:', err);
+  }
+
   if (sampleFileKeys.length > 0) {
     for (const iterator of sampleFileKeys) {
       const sampleFile = req.files[iterator];
