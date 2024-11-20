@@ -44,6 +44,8 @@ const imageUpload = async (req, res) => {
 
   const uploadsDir = path.join(__dirname, 'uploads');
 
+  console.log({ uploadsDir });
+
   try {
     // Ensure the directory exists
     await fs.mkdir(uploadsDir, { recursive: true });
