@@ -103,7 +103,7 @@ const imageUpload = async (req, res) => {
     await fs.unlink(uploadPath);
   }
 
-  res.status(StatusCodes.OK).send('Image Uploaded');
+  res.status(StatusCodes.OK).json({ msg: 'Image Uploaded' });
 };
 
 module.exports = {

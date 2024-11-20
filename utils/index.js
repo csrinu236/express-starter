@@ -17,6 +17,7 @@ const createJwtToken = ({ user }) => {
     name: user.name,
     userId: user._id,
     email: user.email,
+    picture: user.picture,
   };
   const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES_IN,

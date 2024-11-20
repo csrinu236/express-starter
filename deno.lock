@@ -1,0 +1,36 @@
+{
+  "version": "3",
+  "remote": {
+    "https://edge.netlify.com/": "fd941d61d88673d5f28aab283fb86fcc50f08a3bc80ee5470498fcfa88c65cfb",
+    "https://edge.netlify.com/bootstrap/config.ts": "0aa0a225d978b89e0e62cbd853701605199e7a84095e55eeb70147faf1a24803",
+    "https://edge.netlify.com/bootstrap/context.ts": "b9b4e7cbb67a9d83cb28e45145ba3dfa6f05ad965587ef7e2fb0896da62dd16e",
+    "https://edge.netlify.com/bootstrap/cookie.ts": "8b0baae708989ca183c6f3b4ab3d029e6abcbc2e43f93edeb0ff447b3bbc3a05",
+    "https://edge.netlify.com/bootstrap/edge_function.ts": "b8253e86aa83c67341f5cfedeba5049d77fbf84dcab7eceff7566b7728ae9b39",
+    "https://edge.netlify.com/bootstrap/globals/types.ts": "4d90649d4668839422ef94766c53174c3f19c001886eea3266c082a6197fe2fe"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:axios@^1.7.7",
+        "npm:bcrypt@^5.1.1",
+        "npm:body-parser@^1.20.2",
+        "npm:cloudinary@^1.40.0",
+        "npm:cookie-parser@^1.4.6",
+        "npm:cors@^2.8.5",
+        "npm:dot-env@^0.0.1",
+        "npm:env-cmd@^10.1.0",
+        "npm:express-async-errors@^3.1.1",
+        "npm:express-fileupload@^1.4.0",
+        "npm:express@^4.18.2",
+        "npm:http-status-codes@^2.2.0",
+        "npm:jsonwebtoken@^9.0.2",
+        "npm:mongoose@^7.5.0",
+        "npm:morgan@^1.10.0",
+        "npm:nodemailer@^6.9.15",
+        "npm:nodemon@^3.0.1",
+        "npm:serverless-http@^3.2.0",
+        "npm:validator@^13.11.0"
+      ]
+    }
+  }
+}

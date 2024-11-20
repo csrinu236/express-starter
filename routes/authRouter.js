@@ -9,7 +9,7 @@ const authRouter = express.Router();
 authRouter.get('/logout', logout);
 authRouter.get('/google/login', generateGoogleAuthLink);
 authRouter.get('/user', authorizeUser, (req, res) => {
-  return res.json(req.user);
+  return res.json({ user: req.user });
 });
 
 module.exports = { authRouter };

@@ -94,7 +94,9 @@ const logout = async (req, res) => {
   res.cookie('token', 'logout', {
     expires: new Date(new Date().getTime()),
   });
-  res.json({ message: 'logout route' });
+
+  res.redirect(process.env.CLIENT_URL);
+  // res.json({ message: 'logout route' });
 };
 
 module.exports = {
