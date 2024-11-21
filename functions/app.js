@@ -32,6 +32,7 @@ app.use(fileUpload());
 app.get('/auth/google/callback', async (req, res) => {
   // Extract code query param from
   const code = req.query.code;
+  req.query = {};
   // Entry 4 => After making token, attack token to cookies
   // res.redirect will persist the cookie along with response, so cookies will be attached to response
   try {
