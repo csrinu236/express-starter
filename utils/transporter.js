@@ -22,14 +22,14 @@ const UsersCollection = require('../models/User');
 //   },
 // });
 
-const createTransporterForUser = async (userId) => {
-  const { access_token, refresh_token, email, name } =
-    await UsersCollection.findOne({
-      userId,
-    });
+const createTransporterForUser = async (senderEmail) => {
+  const { access_token, refresh_token, name } =
+    USERS_SESSIONS.get(senderEmail) ||
+    (await UsersCollection.findOne({
+      email: senderEmail,
+    }));
 
-  console.log({ access_token, refresh_token, email });
-  USERS_SESSIONS.set(email, { access_token, refresh_token });
+  USERS_SESSIONS.set(senderEmail, { access_token, refresh_token, name });
   if (!access_token || !refresh_token) {
     throw new Error(`No tokens found for user`);
   }
@@ -41,7 +41,7 @@ const createTransporterForUser = async (userId) => {
     secure: false, // true for port 465, false for other ports
     auth: {
       type: 'OAuth2',
-      user: email,
+      user: senderEmail,
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       refreshToken: refresh_token,
@@ -58,7 +58,7 @@ const createTransporterForUser = async (userId) => {
       Promise.reject(e);
     });
 
-  return { transporter, refresh_token, name, senderEmail: email };
+  return { transporter, refresh_token, name, senderEmail };
 };
 
 module.exports = { createTransporterForUser };

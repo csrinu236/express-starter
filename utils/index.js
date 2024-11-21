@@ -143,7 +143,7 @@ const getGoogleAuthTokens = async ({ code }) => {
     //   picture,
     // });
 
-    console.log({ user });
+    // console.log({ user });
     const { token } = createJwtToken({ user });
     return token;
     // return 'Hello';

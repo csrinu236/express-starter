@@ -67,10 +67,10 @@ const imageUpload = async (req, res) => {
     }
   }
 
-  console.log('==============> here111 =========>');
+  console.log('==============> here111 =========>', req?.user);
 
   const { transporter, name, senderEmail } = await createTransporterForUser(
-    req?.user?.userId
+    req?.user?.email
   );
 
   console.log('==============> here222 =========>');
