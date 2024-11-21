@@ -37,7 +37,10 @@ async function getAccessToken(refreshToken) {
 }
 
 const imageUpload = async (req, res) => {
-  const { htmlBody, email } = req.body;
+  const { htmlBody, email, cc, subject } = req.body;
+  if (!htmlBody || !email || !subject) {
+    res.status(StatusCodes.BAD_REQUEST).json({ msg: 'Invalid Request' });
+  }
 
   const uploadedFiles = [];
   const sampleFileKeys = req?.files ? Object.keys(req.files) : [];
@@ -101,7 +104,8 @@ const imageUpload = async (req, res) => {
       accessToken: USERS_SESSIONS.get(senderEmail).access_token,
     },
     to: email,
-    subject: 'Request for Credit Limit Enhacement',
+    cc: cc?.split(',') || [],
+    subject,
     html: htmlBody,
     attachments: uploadedFiles.map((fileName) => {
       return { path: fileName };
