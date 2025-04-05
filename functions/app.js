@@ -11,12 +11,12 @@ const fileUpload = require('express-fileupload');
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // middleware for handling json body, express have their own body parser.
 app.use(morgan('dev')); // for debuging each and every route only in development mode
-// app.use(cookieParser());
-app.use(cookieParser(process.env.JWT_SECRET_KEY));
+app.use(cookieParser());
+// app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use(
   cors({
     credentials: true,
-    origin: ['https://my-front-end-app.netlify.app', 'http://localhost:3000'],
+    origin: ['https://my-front-end-app.netlify.app', 'http://localhost:8888'],
   })
 );
 const bodyParser = require('body-parser');
@@ -25,14 +25,6 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(fileUpload());
-// Also read about cloudinary upload widget
-// Cloudinary's Node.js SDK wraps Cloudinary's upload API and simplifies the integration.
-const cloudinary = require('cloudinary').v2;
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
-});
 
 // routers
 const { appRouter } = require('../routes/authRouter');
@@ -41,10 +33,8 @@ const errorHandlerMiddleware = require('../middlewares/allErrorsHandler');
 const CustomError = require('../customError');
 const { usersRouter } = require('../routes/usersRouter');
 const { StatusCodes } = require('http-status-codes');
-const { productsRouter } = require('../routes/productsRouter');
-const { reviewsRouter } = require('../routes/reviewsRouter');
-const { imageRouter } = require('../routes/imageRouter');
 const { authorizeUser } = require('../middlewares/authMiddleware');
+const { ordersRouter } = require('../routes/ordersRouter');
 
 // This also works
 // app.get('/.netlify/functions/app/health', (req, res) => {
@@ -78,9 +68,7 @@ app.get('/bank-transfer', authorizeUser, (req, res) => {
 // routes
 app.use('/v1/auth', appRouter);
 app.use('/v1/users', usersRouter);
-app.use('/v1/products', productsRouter);
-app.use('/v1/reviews', reviewsRouter);
-app.use('/v1/images', imageRouter);
+app.use('/v1/orders', ordersRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
