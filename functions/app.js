@@ -1,4 +1,5 @@
 require('express-async-errors');
+const path = require('path');
 const serverless = require('serverless-http');
 const express = require('express');
 const connectDB = require('../db/connect');
@@ -69,6 +70,7 @@ app.get('/bank-transfer', authorizeUser, (req, res) => {
 app.use('/api/v1/auth', appRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/orders', ordersRouter);
+app.use('/', express.static(path.join(__dirname, 'build')));
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
