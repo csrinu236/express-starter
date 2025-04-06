@@ -4,6 +4,13 @@ const { StatusCodes } = require('http-status-codes');
 const jwt = require('jsonwebtoken');
 const { createJwtToken, attachCookieToResponse } = require('../utils/index.js');
 
+const checkUser = async (req, res) => {
+  res.status(StatusCodes.OK).json({
+    message: 'user verified',
+    user: req.user,
+  });
+};
+
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -73,4 +80,5 @@ module.exports = {
   login,
   logout,
   register,
+  checkUser,
 };

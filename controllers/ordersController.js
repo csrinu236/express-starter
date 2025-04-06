@@ -3,14 +3,21 @@ const CustomError = require('../customError');
 const OrdersCollection = require('../models/Order');
 
 const getAllOrders = async (req, res) => {
-  const orders = await OrdersCollection.find({});
+  const orders = await OrdersCollection.find({}).select(
+    'customerName customerPhoneNumber orderedDate amountPaid _id'
+  );
   res.status(StatusCodes.OK).json({ orders });
 };
 // we add mongoose virtuals, don't persist in database
 const getSingleOrder = async (req, res) => {
   const orderId = req.params.orderId;
   // we can also get reviews associated with this product with populate method
-  const order = await OrdersCollection.findOne({ _id: orderId });
+  const order = await OrdersCollection.findOne({ _id: orderId }).select(
+    '-__v -createdAt -updatedAt'
+  );
+  if (!order) {
+    throw new CustomError('no such product found', StatusCodes.BAD_REQUEST);
+  }
   res.status(StatusCodes.OK).json({ order });
 };
 

@@ -16,7 +16,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: ['https://my-front-end-app.netlify.app', 'http://localhost:8888'],
+    origin: ['https://my-front-end-app.netlify.app', 'http://localhost:3000'],
   })
 );
 const bodyParser = require('body-parser');
@@ -66,9 +66,9 @@ app.get('/bank-transfer', authorizeUser, (req, res) => {
 // =============== bank amount transfer
 
 // routes
-app.use('/v1/auth', appRouter);
-app.use('/v1/users', usersRouter);
-app.use('/v1/orders', ordersRouter);
+app.use('/api/v1/auth', appRouter);
+app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/orders', ordersRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);

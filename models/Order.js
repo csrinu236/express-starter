@@ -11,9 +11,16 @@ const productSchema = new mongoose.Schema(
       required: true,
       min: 1,
     },
+    price: {
+      type: Number,
+      required: true,
+    },
     disc: {
       type: Number,
       default: 0, // discount percentage or amount (your choice)
+      min: 0,
+      max: 100,
+      required: true,
     },
     discPrice: {
       type: Number,
@@ -84,8 +91,9 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       enum: [
         {
-          values: ['Male', 'Female'],
-          message: '{VALUE} is not supported. Gender must be Male or Female.',
+          values: ['Male', 'Female', '-'],
+          message:
+            '{VALUE} is not supported. Gender must be Male or Female or -',
         },
       ],
       set: (v) => {
@@ -114,13 +122,10 @@ const OrderSchema = new mongoose.Schema(
     orderedDate: {
       type: Date,
       required: [true, 'Please provide Date'],
-      default: Date.now,
     },
   },
   { timestamps: true }
 );
 
-// Make sure that you've added everything you want to schema,
-// including hooks, before calling.model()!
 const OrdersCollection = mongoose.model('Orders-Collection', OrderSchema);
 module.exports = OrdersCollection;
