@@ -73,7 +73,8 @@ const logout = async (req, res) => {
   res.cookie('token', 'logout', {
     expires: new Date(new Date().getTime()),
   });
-  res.json({ message: 'logout route' });
+  return res.redirect('/login');
+  // res.json({ message: 'logout route' });
 };
 
 module.exports = {
