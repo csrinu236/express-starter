@@ -65,6 +65,7 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: [100, 'Name can not be more than 100 characters'],
+      required: [true, 'Pet Name required'],
       set: (v) => {
         if (!v) return v;
         return v
@@ -78,6 +79,7 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: [100, 'Name can not be more than 100 characters'],
+      required: [true, 'Pet Breed required'],
       set: (v) => {
         if (!v) return v;
         return v
@@ -96,6 +98,7 @@ const OrderSchema = new mongoose.Schema(
             '{VALUE} is not supported. Gender must be Male or Female or -',
         },
       ],
+      required: [true, 'Pet Gender required'],
       set: (v) => {
         if (!v) return v;
         return v
