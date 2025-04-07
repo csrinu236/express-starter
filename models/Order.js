@@ -130,5 +130,35 @@ const OrderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+OrderSchema.pre('validate', function (next) {
+  const { petName, petBreed, petGender } = this;
+
+  const anyIsDash = [petName, petBreed, petGender].includes('-');
+  const allAreDash = [petName, petBreed, petGender].every((val) => val === '-');
+
+  if (anyIsDash && !allAreDash) {
+    if (petName !== '-') {
+      this.invalidate(
+        'petName',
+        'If any of petName, petBreed, or petGender is "-", all must be "-"'
+      );
+    }
+    if (petBreed !== '-') {
+      this.invalidate(
+        'petBreed',
+        'If any of petName, petBreed, or petGender is "-", all must be "-"'
+      );
+    }
+    if (petGender !== '-') {
+      this.invalidate(
+        'petGender',
+        'If any of petName, petBreed, or petGender is "-", all must be "-"'
+      );
+    }
+  }
+
+  next();
+});
+
 const OrdersCollection = mongoose.model('Orders-Collection', OrderSchema);
 module.exports = OrdersCollection;
