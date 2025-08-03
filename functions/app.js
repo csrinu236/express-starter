@@ -37,6 +37,7 @@ const {
   getGitHubAuthTokens,
 } = require('../utils');
 const { cardsRouter } = require('../routes/cardsRouter');
+const { ccRouter } = require('../routes/ccRouter');
 
 const tempRouter = express.Router();
 
@@ -141,6 +142,7 @@ tempRouter.get('/auth/github/callback', async (req, res) => {
 app.use('/', tempRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/cards', cardsRouter);
+app.use('/api/v1/cc', ccRouter);
 
 app.use(errorHandlerMiddleware); // all errors will come here
 app.use(notFound);
