@@ -41,9 +41,9 @@ const addCard = async (req, res) => {
     cvv,
   } = req.body;
 
-  const { isValid, reason } = validateCardNumber(cardNumber, cardVariant, cvv);
+  const { valid, reason } = validateCardNumber(cardNumber, cardVariant, cvv);
 
-  if (!isValid) {
+  if (!valid) {
     return res.status(StatusCodes.OK).json({
       reason,
     });
@@ -63,13 +63,82 @@ const addCard = async (req, res) => {
     billGenDate,
     annualCharges,
     cardName,
-    cvv,
     lastFourDigits: cardNumber.slice(-4),
   });
 
   res.status(StatusCodes.OK).json({
     message: 'card successfully added',
     card,
+  });
+};
+
+const addCardsBulk = async (req, res) => {
+  const { userId } = req.user;
+  const cards = req.body.cards; // Expecting an array of cards
+
+  if (!Array.isArray(cards) || cards.length === 0) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: 'No cards provided or invalid format',
+    });
+  }
+
+  const insertedCards = [];
+
+  for (const card of cards) {
+    const {
+      cardNumber,
+      expiryMonth,
+      expiryYear,
+      cardImageUrl,
+      bankName,
+      cardVariant,
+      limit,
+      billGenDate,
+      annualCharges,
+      cardName,
+      cvv,
+    } = card;
+
+    const { valid, reason } = validateCardNumber(cardNumber, cardVariant, cvv);
+
+    if (!valid) {
+      return res.status(StatusCodes.OK).json({
+        message: 'Card validation failed',
+        reason,
+        failedCard: cardNumber,
+      });
+    }
+
+    const encryptedNumber = encrypt(
+      `${cardNumber}-${expiryMonth}-${expiryYear}-${cvv}`
+    );
+
+    insertedCards.push({
+      userId,
+      encryptedNumber,
+      cardImageUrl,
+      bankName,
+      cardVariant,
+      limit,
+      billGenDate,
+      annualCharges,
+      cardName,
+      lastFourDigits: cardNumber.slice(-4),
+    });
+  }
+
+  console.log('=======>', { insertedCards });
+
+  // Insert all at once
+
+  await CCCollection.deleteMany({ userId });
+  const createdCards = await CCCollection.insertMany([...insertedCards]);
+  console.log({ createdCards });
+
+  res.status(StatusCodes.OK).json({
+    message: 'Cards added successfully',
+    count: createdCards.length,
+    cards: createdCards,
   });
 };
 
@@ -93,4 +162,5 @@ module.exports = {
   deleteCard,
   addCard,
   getAllCards,
+  addCardsBulk,
 };

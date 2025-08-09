@@ -10,7 +10,16 @@ const CCSchema = new mongoose.Schema({
   bankName: {
     type: String,
     required: true,
-    enum: ['Axis Bank'], // extend as needed
+    enum: [
+      'Axis Bank',
+      'ICICI Bank',
+      'IDFC First Bank',
+      'Indus Ind Bank',
+      'HDFC Bank',
+      'SBI Bank',
+      'Kotak Mahindra Bank',
+      'CSB Bank',
+    ], // extend as needed
   },
   encryptedNumber: { type: String, required: true },
   annualCharges: { type: Number, required: true },

@@ -55,6 +55,10 @@ function validateCardNumber(cardNumber, variant, cvv) {
     return { valid: false, reason: 'CVV must contain only digits' };
   }
 
+  const variantLower = variant.toLowerCase();
+
+  const expectedLength = variantLower === 'amex' ? 4 : 3;
+
   if (trimmedCVV.length !== expectedLength) {
     return {
       valid: false,
@@ -78,7 +82,7 @@ function validateCardNumber(cardNumber, variant, cvv) {
     return { valid: false, reason: 'Failed Luhn check' };
   }
 
-  return { valid: true };
+  return { valid: true, reason: '' };
 }
 
 module.exports = {
