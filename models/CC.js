@@ -14,11 +14,13 @@ const CCSchema = new mongoose.Schema({
       'Axis Bank',
       'ICICI Bank',
       'IDFC First Bank',
-      'Indus Ind Bank',
+      'IndusInd Bank',
       'HDFC Bank',
       'SBI Bank',
       'Kotak Mahindra Bank',
       'CSB Bank',
+      'RBL Bank',
+      'HSBC Bank',
     ], // extend as needed
   },
   encryptedNumber: { type: String, required: true },
@@ -38,6 +40,10 @@ const CCSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  orderIndex: {
+    type: Number,
+    required: true,
   },
 });
 

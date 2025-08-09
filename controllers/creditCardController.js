@@ -8,7 +8,8 @@ const getAllCards = async (req, res) => {
 
   let cards = await CCCollection.find({ userId })
     .select('-__v')
-    .sort({ createdAt: -1 })
+    // .sort({ createdAt: -1 })
+    .sort({ orderIndex: 1 })
     .lean();
 
   cards = cards.map((c) => {
@@ -82,9 +83,7 @@ const addCardsBulk = async (req, res) => {
     });
   }
 
-  const insertedCards = [];
-
-  for (const card of cards) {
+  const insertedCards = cards.map((card, index) => {
     const {
       cardNumber,
       expiryMonth,
@@ -100,12 +99,10 @@ const addCardsBulk = async (req, res) => {
     } = card;
 
     const { valid, reason } = validateCardNumber(cardNumber, cardVariant, cvv);
-
     if (!valid) {
-      return res.status(StatusCodes.OK).json({
-        message: 'Card validation failed',
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: 'Cards added successfully',
         reason,
-        failedCard: cardNumber,
       });
     }
 
@@ -113,7 +110,7 @@ const addCardsBulk = async (req, res) => {
       `${cardNumber}-${expiryMonth}-${expiryYear}-${cvv}`
     );
 
-    insertedCards.push({
+    return {
       userId,
       encryptedNumber,
       cardImageUrl,
@@ -123,11 +120,11 @@ const addCardsBulk = async (req, res) => {
       billGenDate,
       annualCharges,
       cardName,
+      cvv,
       lastFourDigits: cardNumber.slice(-4),
-    });
-  }
-
-  console.log('=======>', { insertedCards });
+      orderIndex: index, // <- store insertion order
+    };
+  });
 
   // Insert all at once
 
