@@ -1,7 +1,7 @@
 const cardPatterns = {
   visa: /^4\d{12}(\d{3})?$/, // 13 or 16 digits starting with 4
   mastercard: /^(5[1-5]\d{14}|2(2[2-9]|[3-6]\d|7[01])\d{12}|2720\d{12})$/, // Mastercard (51–55 or 2221–2720)
-  rupay: /^(60|65|81|82|508)[0-9]{14}$/, // Common patterns (simplified, not fully exhaustive)
+  rupay: /^(60|65|81|35|82|508)[0-9]{14}$/, // Common patterns (simplified, not fully exhaustive)
   amex: /^3[47]\d{13}$/, // American Express: 15 digits
   diners: /^3(6|8)\d{12}$/, // Diners Club: 14 digits
   discover: /^6(?:011|5\d{2})\d{12}$/, // Discover: 16 digits
