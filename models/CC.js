@@ -22,6 +22,7 @@ const CCSchema = new mongoose.Schema({
       'RBL Bank',
       'HSBC Bank',
       'Bank Of Baroda',
+      'Yes Bank',
     ], // extend as needed
   },
   encryptedNumber: { type: String, required: true },
