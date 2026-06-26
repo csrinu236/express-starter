@@ -53,6 +53,7 @@ const addCard = async (req, res) => {
   const encryptedNumber = encrypt(
     `${cardNumber}-${expiryMonth}-${expiryYear}-${cvv}`
   );
+  const orderIndex = await CCCollection.countDocuments({ userId });
 
   const card = await CCCollection.create({
     userId,
@@ -65,6 +66,7 @@ const addCard = async (req, res) => {
     annualCharges,
     cardName,
     lastFourDigits: cardNumber.slice(-4),
+    orderIndex,
   });
 
   res.status(StatusCodes.OK).json({
@@ -83,7 +85,9 @@ const addCardsBulk = async (req, res) => {
     });
   }
 
-  const insertedCards = cards.map((card, index) => {
+  const insertedCards = [];
+
+  for (const [index, card] of cards.entries()) {
     const {
       cardNumber,
       expiryMonth,
@@ -101,16 +105,19 @@ const addCardsBulk = async (req, res) => {
     const { valid, reason } = validateCardNumber(cardNumber, cardVariant, cvv);
     if (!valid) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: 'Cards added successfully',
+        message: 'Invalid card in bulk upload',
+        cardIndex: index,
         reason,
       });
     }
+
+    const lastFourDigits = cardNumber.slice(-4);
 
     const encryptedNumber = encrypt(
       `${cardNumber}-${expiryMonth}-${expiryYear}-${cvv}`
     );
 
-    return {
+    insertedCards.push({
       userId,
       encryptedNumber,
       cardImageUrl,
@@ -121,10 +128,21 @@ const addCardsBulk = async (req, res) => {
       annualCharges,
       cardName,
       cvv,
-      lastFourDigits: cardNumber.slice(-4),
+      lastFourDigits,
       orderIndex: index, // <- store insertion order
-    };
-  });
+    });
+  }
+
+  for (const [index, card] of insertedCards.entries()) {
+    const validationError = new CCCollection(card).validateSync();
+    if (validationError) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: 'Invalid card in bulk upload',
+        cardIndex: index,
+        reason: validationError.message,
+      });
+    }
+  }
 
   // Insert all at once
 
