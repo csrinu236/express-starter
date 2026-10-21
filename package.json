@@ -10,7 +10,7 @@
     "netlify": "env-cmd -f ./.env netlify dev"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "keywords": [],
   "author": "",
