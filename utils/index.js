@@ -2,9 +2,12 @@ const jwt = require('jsonwebtoken');
 const CustomError = require('../customError');
 const { StatusCodes } = require('http-status-codes');
 const axios = require('axios');
+const { OAuth2Client } = require('google-auth-library');
 const UsersCollection = require('../models/User');
 const { transporter } = require('./transporter');
 const getHtml = require('./getHtml');
+
+const googleOAuthClient = new OAuth2Client();
 
 const verifyToken = ({ token }) => {
   return jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -39,7 +42,7 @@ const attachCookieToResponse = ({ token, res }) => {
     // the server will add a digital signature to the cookie's value before sending it to the client's
     // browser.This digital signature is generated using a secret key known only to the server.
     // signed: true,
-    secure: true, // https false in development
+    secure: process.env.NODE_ENV === 'production',
   });
 };
 
@@ -72,48 +75,65 @@ const getGoogleUser = async ({ access_token, id_token }) => {
 const getGoogleAuthTokens = async ({ code }) => {
   // Your app exchanges the authorization code for an access token and a refresh token by sending a POST request to Google’s OAuth 2.0 server, including your client ID, client secret, and the authorization code.
 
-  const scope = [
-    'https://www.googleapis.com/auth/gmail.send',
-    'https://www.googleapis.com/auth/gmail.modify',
-    'https://www.googleapis.com/auth/userinfo.email', // for accessing email info
-  ].join(' ');
-
   const rootUrl = 'https://oauth2.googleapis.com/token';
-  const values = {
-    code,
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    client_secret: process.env.GOOGLE_CLIENT_SECRET,
-    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
-    grant_type: 'authorization_code',
-    scope,
-  };
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI;
 
   try {
+    if (!code) {
+      throw new Error('Google authorization code is missing');
+    }
+    if (!clientId) {
+      throw new Error('Google OAuth client ID is not configured');
+    }
+    if (!clientSecret || !redirectUri) {
+      throw new Error('Google OAuth credentials are not fully configured');
+    }
+
     const { data } = await axios({
       method: 'post',
       url: rootUrl,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      params: values,
+      data: new URLSearchParams({
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        grant_type: 'authorization_code',
+      }).toString(),
     });
-    console.log('google auth data ============>', data);
-    // jwt.decode is different from jwt.verifiy which requires secret_key
-    // decode will retrieve info embedded in the token that we see on "https://jwt.io"
-    const { email, name, email_verified, picture } = jwt.decode(data?.id_token);
-    console.log({ email, name, email_verified, picture });
-    // or we can utilise below one
-    // const {
-    //   email: email_2,
-    //   name: name_2,
-    //   email_verified: email_verified_2,
-    // } = await getGoogleUser({
-    //   access_token: data?.access_token,
-    //   id_token: data?.id_token,
-    // });
 
-    if (!email_verified) {
-      // Primise reject will forward errors out of this getGoogleAuthTokens into next catch block
-      return Promise.reject(new Error('Email not verified by Google'));
+    if (!data?.id_token) {
+      throw new Error('Google token response did not include an ID token');
     }
+
+    const ticket = await googleOAuthClient.verifyIdToken({
+      idToken: data.id_token,
+      audience: clientId,
+    });
+    const payload = ticket.getPayload();
+    const audiences = Array.isArray(payload?.aud)
+      ? payload.aud
+      : [payload?.aud];
+
+    if (
+      !payload ||
+      !['accounts.google.com', 'https://accounts.google.com'].includes(
+        payload.iss
+      ) ||
+      !audiences.includes(clientId) ||
+      (audiences.length > 1 && payload.azp !== clientId) ||
+      typeof payload.exp !== 'number' ||
+      payload.exp <= Math.floor(Date.now() / 1000) ||
+      !payload.sub ||
+      !payload.email ||
+      payload.email_verified !== true
+    ) {
+      throw new Error('Google ID token claims are invalid');
+    }
+
+    const { email, name, picture } = payload;
     // upsert => update if found or insert if not found
     let user = await UsersCollection.findOneAndUpdate(
       {
@@ -132,20 +152,9 @@ const getGoogleAuthTokens = async ({ code }) => {
         upsert: true,
       }
     );
-    // if (!user) {
-    //   user = {
-    //     name: name,
-    //     email: email,
-    //     role: 'user',
-    //     SocialMedia: true,
-    //   };
-    //   await UsersCollection.create({ ...user });
-    // }
-    console.log({ user });
     const { token } = createJwtToken({ user });
     return token;
   } catch (error) {
-    console.log({ error });
     // Primise reject will forward errors out of this getGoogleAuthTokens into next catch block
     return Promise.reject(error);
   }

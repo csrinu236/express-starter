@@ -6,7 +6,7 @@ const authorizeUser = (req, res, next) => {
   // console.log(req.signedCookies);
   // const { token } = req.signedCookies;
   const { token } = req.cookies;
-  console.log({ token });
+  // // console.log({ token });
   if (!token) {
     throw new CustomError(
       'Please login, no token came with the request',
@@ -15,7 +15,7 @@ const authorizeUser = (req, res, next) => {
   }
   try {
     const isTokenValid = verifyToken({ token });
-    console.log({ isTokenValid });
+    // // console.log({ isTokenValid });
     const { userId, picture, name } = isTokenValid;
     // role === 'admin' check is done in authorizeAdmin middleware
     // so that this middleware can be used for single user specific routes

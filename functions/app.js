@@ -87,8 +87,8 @@ function getFileSystemStructure(dirPath) {
 }
 
 tempRouter.get('/health', (req, res) => {
-  const fileSystem = getFileSystemStructure(process.cwd());
-  res.status(200).json({ msg: 'Health Okay', fileSystem });
+  // const fileSystemPath = getFileSystemStructure(process.cwd());
+  res.status(200).json({ msg: 'Health Okay' });
 });
 
 tempRouter.get('/logout', (req, res) => {
@@ -99,8 +99,8 @@ tempRouter.get('/logout', (req, res) => {
 });
 
 tempRouter.get('/cookie-check', (req, res) => {
-  console.log(req.cookies);
-  console.log(req.signedCookies);
+  // console.log(req.cookies);
+  // console.log(req.signedCookies);
   throw new CustomError('Checking Custom Error', StatusCodes.BAD_REQUEST);
 });
 

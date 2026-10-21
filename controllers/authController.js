@@ -8,7 +8,6 @@ const {
   sendEmailVerificationLink,
 } = require('../utils/index.js');
 const crypto = require('crypto');
-const { transporter } = require('../utils/transporter.js');
 const getHtml = require('../utils/getHtml.js');
 
 // Entry 2
@@ -23,6 +22,7 @@ const generateGoogleAuthLink = async (req, res) => {
     prompt: 'consent',
 
     scope: [
+      'openid',
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
     ].join(' '),
@@ -89,7 +89,6 @@ const login = async (req, res) => {
         upsert: true,
       }
     ); // this one goes to pre save hook
-    console.log({ user });
     await sendEmailVerificationLink({ email, id });
     throw new CustomError(
       'Email not verified, Verification link has been sent, please verify your email',
@@ -122,7 +121,6 @@ const login = async (req, res) => {
 
 const user = async (req, res) => {
   const user = req.user;
-  console.log({ user });
   res.status(StatusCodes.OK).json({
     msg: 'user verified',
     user,

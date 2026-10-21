@@ -7,6 +7,7 @@ const CCSchema = new mongoose.Schema({
     required: true,
   },
   cardName: { type: String, required: true },
+  cardholderName: { type: String, default: '' },
   bankName: {
     type: String,
     required: true,
@@ -24,6 +25,11 @@ const CCSchema = new mongoose.Schema({
       'Bank Of Baroda',
       'Yes Bank',
     ], // extend as needed
+  },
+  cardVariant: {
+    type: String,
+    required: true,
+    enum: ['Visa', 'Mastercard', 'Rupay', 'Amex', 'Diners', 'Discover', 'JCB'],
   },
   encryptedNumber: { type: String, required: true },
   annualCharges: { type: Number, required: true },
